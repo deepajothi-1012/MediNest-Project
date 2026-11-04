@@ -1,0 +1,23 @@
+Product catalog placeholder photos are local copies from Unsplash.
+
+- medicine.jpg: https://images.unsplash.com/photo-1584308666744-24d5c474f2ae
+- skincare.jpg: https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b
+- wellness.jpg: https://images.unsplash.com/photo-1571781926291-c477ebfd024b
+- pharma-pills.jpg: https://images.unsplash.com/photo-1631549916768-4119b2e5f926
+- pharma-lab.jpg: https://images.unsplash.com/photo-1760074032600-36943c264fbf
+- pharma-capsule.jpg: https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2
+- pharma-bottle.jpg: https://images.unsplash.com/photo-1628771065518-0d82f1938462
+- pharma-vials.jpg: https://images.unsplash.com/photo-1576671081837-49000212a370
+- pharma-molecule.jpg: https://images.unsplash.com/photo-1656331797721-b593b8f00297
+- pharma-assorted.jpg: https://images.unsplash.com/photo-1512069772995-ec65ed45afd6
+- pharma-orange-pill.jpg: https://images.unsplash.com/photo-1587854692152-cbe660dbde88
+- hair-care.jpg: https://images.unsplash.com/photo-1747858989102-cca0f4dc4a11
+- oral-care.jpg: https://images.unsplash.com/photo-1772911141524-d3dc8b1cc97e
+- medical-device.jpg: https://images.unsplash.com/photo-1603398938378-e54eab446dde
+- medicine-tablets.jpg: https://images.unsplash.com/photo-1624362772755-4d5843e67047
+- vitamins-category.jpg: https://images.unsplash.com/photo-1707129785947-ddc627a8bab9
+- herbal-products.jpg: https://images.unsplash.com/photo-1545840716-c82e9eec6930
+- baby-care.jpg: https://images.unsplash.com/photo-1716972065448-e08a46809530
+- self-care.jpg: https://images.unsplash.com/photo-1631729371254-42c2892f0e6e
+
+Unsplash License: https://unsplash.com/license
