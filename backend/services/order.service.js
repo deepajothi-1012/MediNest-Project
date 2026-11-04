@@ -88,8 +88,9 @@ class OrderService {
 
     async placeOrder(userId, options = {}) {
         const paymentMethod = options.paymentMethod || 'COD';
-        if (paymentMethod !== 'COD') {
-            throw serviceError('Only Cash on Delivery is currently supported', 400);
+        const supportedPaymentMethods = ['COD', 'UPI_ON_DELIVERY', 'CARD_ON_DELIVERY'];
+        if (!supportedPaymentMethods.includes(paymentMethod)) {
+            throw serviceError('Select a supported payment method', 400);
         }
 
         const requestedKey = typeof options.idempotencyKey === 'string'
@@ -201,7 +202,7 @@ class OrderService {
                 subtotal,
                 totalAmount: subtotal,
                 deliveryAddress: address,
-                paymentMethod: 'COD',
+                paymentMethod,
                 paymentStatus: 'Pending',
                 status: 'Order Placed'
             });

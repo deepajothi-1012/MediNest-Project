@@ -10,6 +10,7 @@ import pharmacyVialsImage from './assets/products/pharma-vials.jpg'
 import pharmacyMoleculeImage from './assets/products/pharma-molecule.jpg'
 import pharmacyAssortedImage from './assets/products/pharma-assorted.jpg'
 import pharmacyOrangePillImage from './assets/products/pharma-orange-pill.jpg'
+import medicineImage from './assets/products/medicine.jpg'
 import hairCareImage from './assets/products/hair-care.jpg'
 import oralCareImage from './assets/products/oral-care.jpg'
 import medicalDeviceImage from './assets/products/medical-device.jpg'
@@ -18,6 +19,7 @@ import vitaminsCategoryImage from './assets/products/vitamins-category.jpg'
 import herbalProductsImage from './assets/products/herbal-products.jpg'
 import babyCareImage from './assets/products/baby-care.jpg'
 import selfCareImage from './assets/products/self-care.jpg'
+import wellnessImage from './assets/products/wellness.jpg'
 
 const medicineProductImages = [
   medicineTabletsImage,
@@ -29,10 +31,27 @@ const medicineProductImages = [
 ]
 const wellnessProductImages = [
   vitaminsCategoryImage,
+  pharmacyOrangePillImage,
   pharmacyVialsImage,
   pharmacyMoleculeImage,
   pharmacyLabImage,
 ]
+const deviceProductImages = [
+  medicalDeviceImage,
+  medicineImage,
+  pharmacyLabImage,
+]
+const categoryProductImages = {
+  medicines: medicineProductImages,
+  vitamins: wellnessProductImages,
+  wellness: wellnessProductImages,
+  'personal care': [selfCareImage, skincareProductImage, wellnessImage],
+  'baby products': [babyCareImage, selfCareImage, skincareProductImage],
+  ayurveda: [herbalProductsImage, pharmacyCapsuleImage, wellnessImage, pharmacyBottleImage],
+  devices: deviceProductImages,
+  'oral care': [oralCareImage, skincareProductImage, pharmacyBottleImage],
+  'hair care': [hairCareImage, skincareProductImage, selfCareImage],
+}
 const OTP_RESEND_DELAY_SECONDS = 60
 
 const homeCategories = [
@@ -96,28 +115,12 @@ const homeHeroSlides = [
 
 function getProductImage(category = '', productKey = '') {
   const normalizedCategory = category.toLowerCase()
-  let images = medicineProductImages
+  const images = categoryProductImages[normalizedCategory] || medicineProductImages
 
-  if (/hair/.test(normalizedCategory)) {
-    images = [hairCareImage]
-  } else if (/oral/.test(normalizedCategory)) {
-    images = [oralCareImage]
-  } else if (/baby|infant/.test(normalizedCategory)) {
-    images = [babyCareImage]
-  } else if (/device|tool|equipment/.test(normalizedCategory)) {
-    images = [medicalDeviceImage]
-  } else if (/herbal|ayurveda/.test(normalizedCategory)) {
-    images = [herbalProductsImage]
-  } else if (/vitamin|supplement|wellness/.test(normalizedCategory)) {
-    images = wellnessProductImages
-  } else if (/personal|skin|beauty|self.?care/.test(normalizedCategory)) {
-    images = [selfCareImage, skincareProductImage]
-  }
-
-  const imageIndex = Array.from(`${normalizedCategory}:${productKey}`).reduce(
+  const imageIndex = Array.from(`${normalizedCategory}:${String(productKey).toLowerCase()}`).reduce(
     (hash, character) => (hash * 31 + character.charCodeAt(0)) >>> 0,
     0
-  ) % images.len
+  ) % images.length
   return images[imageIndex]
 }
 
@@ -154,8 +157,13 @@ function formatINR(amount) {
     }).format(amount || 0)
 }
 
-const categories = ['All products', 'Medicines', 'Vitamins', 'Wellness', 'Personal care', 'Baby products', 'Ayurveda', 'Devices', 'Oral care', 'Hair care']
+const categories = ['Medicines', 'Vitamins', 'Wellness', 'Personal care', 'Baby products', 'Ayurveda', 'Devices', 'Oral care', 'Hair care']
 const categoryLabels = { Wellness: 'Health products', Ayurveda: 'Herbal products', Devices: 'Health tools' }
+const paymentMethodLabels = {
+  COD: 'Cash on Delivery',
+  UPI_ON_DELIVERY: 'UPI at delivery',
+  CARD_ON_DELIVERY: 'Card at delivery',
+}
 const pageParams = new URLSearchParams(window.location.search)
 const requestedCategory = pageParams.get('category')
 const isCartPage = pageParams.get('view') === 'cart'
@@ -239,6 +247,7 @@ function App() {
   const [orders, setOrders] = useState([])
   const [addresses, setAddresses] = useState([])
   const [selectedAddressId, setSelectedAddressId] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('COD')
   const [checkoutKey, setCheckoutKey] = useState('')
   const [inventory, setInventory] = useState([])
   const [adminUsers, setAdminUsers] = useState([])
@@ -934,7 +943,7 @@ function App() {
         headers: { 'Idempotency-Key': checkoutKey },
         body: {
           ...checkoutAddress,
-          paymentMethod: 'COD',
+          paymentMethod,
           idempotencyKey: checkoutKey,
         },
       })
@@ -1270,7 +1279,7 @@ function App() {
 
       <section className="orders-section" id="orders" aria-labelledby="orders-title">
         <div className="section-heading"><div><p className="section-kicker">YOUR ACTIVITY</p><h2 id="orders-title">{userRole === 'admin' ? 'All orders' : 'Your recent orders'}</h2></div><span className="order-count">{orders.length} {orders.length === 1 ? 'order' : 'orders'}</span></div>
-        {!token ? <div className="orders-empty"><span aria-hidden="true"><CartIcon /></span><p>Sign in to view your orders.</p><button type="button" onClick={() => setIsAuthOpen(true)}>Sign in</button></div> : orders.length === 0 ? <div className="orders-empty"><span aria-hidden="true"><CartIcon /></span><p>Your orders will show here after you place an order.</p><a href="/">Shop products</a></div> : <div className="orders-list">{orders.map((order) => <article className="order-card" key={order._id}><div className="order-card-heading"><div><small>ORDER {String(order._id).slice(-8).toUpperCase()}</small><strong>{order.status}</strong></div><span className="order-status">{order.paymentMethod} · {order.paymentStatus}</span></div><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p><p>{order.deliveryAddress?.streetAddress}, {order.deliveryAddress?.city}, {order.deliveryAddress?.state} {order.deliveryAddress?.postalCode}</p><div className="order-card-footer"><span>{new Date(order.createdAt).toLocaleDateString('en-IN')} · {formatINR(order.totalAmount)}</span><button type="button" onClick={() => reorder(order.items)}>Buy again</button>{order.status !== 'Delivered' && order.status !== 'Cancelled' && <button type="button" onClick={() => cancelOrder(order._id)}>Cancel</button>}{userRole === 'admin' && <select aria-label={`Update status for order ${order._id}`} value={order.status} onChange={(event) => updateOrderStatus(order._id, event.target.value)}><option>Order Placed</option><option>Processing</option><option>Shipped</option><option>Delivered</option></select>}</div></article>)}</div>}
+        {!token ? <div className="orders-empty"><span aria-hidden="true"><CartIcon /></span><p>Sign in to view your orders.</p><button type="button" onClick={() => setIsAuthOpen(true)}>Sign in</button></div> : orders.length === 0 ? <div className="orders-empty"><span aria-hidden="true"><CartIcon /></span><p>Your orders will show here after you place an order.</p><a href="/">Shop products</a></div> : <div className="orders-list">{orders.map((order) => <article className="order-card" key={order._id}><div className="order-card-heading"><div><small>ORDER {String(order._id).slice(-8).toUpperCase()}</small><strong>{order.status}</strong></div><span className="order-status">{paymentMethodLabels[order.paymentMethod] || order.paymentMethod} · {order.paymentStatus}</span></div><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p><p>{order.deliveryAddress?.streetAddress}, {order.deliveryAddress?.city}, {order.deliveryAddress?.state} {order.deliveryAddress?.postalCode}</p><div className="order-card-footer"><span>{new Date(order.createdAt).toLocaleDateString('en-IN')} · {formatINR(order.totalAmount)}</span><button type="button" onClick={() => reorder(order.items)}>Buy again</button>{order.status !== 'Delivered' && order.status !== 'Cancelled' && <button type="button" onClick={() => cancelOrder(order._id)}>Cancel</button>}{userRole === 'admin' && <select aria-label={`Update status for order ${order._id}`} value={order.status} onChange={(event) => updateOrderStatus(order._id, event.target.value)}><option>Order Placed</option><option>Processing</option><option>Shipped</option><option>Delivered</option></select>}</div></article>)}</div>}
       </section>
 
       {token && <section className="profile-section" id="profile" aria-labelledby="profile-title">
@@ -1399,9 +1408,9 @@ function App() {
       {isCartPage && (
         <section className="cart-page-panel" aria-label="Shopping cart">
           <div className="cart-panel-heading"><div><p className="section-kicker">YOUR SHOPPING BAG</p><h2>Your Cart <span>({cartCount})</span></h2></div><a className="text-link" href="/">Continue shopping</a></div>
-          {orderPlaced ? <p className="order-success" role="status">Order {placedOrderId} placed successfully with Cash on Delivery.</p> : cart.length === 0 ? <div className="empty-cart"><span aria-hidden="true"><CartIcon /></span><p>Your cart is empty.</p></div> : <>
+          {orderPlaced ? <p className="order-success" role="status">Order {placedOrderId} placed successfully. Payment: {paymentMethodLabels[paymentMethod]}.</p> : cart.length === 0 ? <div className="empty-cart"><span aria-hidden="true"><CartIcon /></span><p>Your cart is empty.</p></div> : <>
             <ul className="cart-items">{cart.map((item) => <li className="cart-item" key={item.id}><div><strong>{item.name}</strong><p>{formatINR(item.price)} each</p></div><div className="quantity-controls"><button type="button" onClick={() => changeQuantity(item.id, -1)} aria-label={`Remove one ${item.name}`}>−</button><span>{item.quantity}</span><button type="button" onClick={() => changeQuantity(item.id, 1)} aria-label={`Add one ${item.name}`}>+</button></div></li>)}</ul>
-            <div className="cart-total"><span>Subtotal</span><strong>{formatINR(cartTotal)}</strong></div><p className="delivery-note">Cash on Delivery · No online payment is collected.</p>
+            <div className="cart-total"><span>Subtotal</span><strong>{formatINR(cartTotal)}</strong></div><p className="delivery-note">Choose cash, UPI, or card payment at delivery. Online payment is not collected at checkout.</p>
             <button className="checkout-button" type="button" onClick={openCheckout}>Enter delivery details</button>
             {isCheckoutOpen && <form className="checkout-form" onSubmit={handleCheckoutSubmit}>
               <h3>Where should we deliver?</h3>
@@ -1415,7 +1424,8 @@ function App() {
                 <label>PIN code<input name="postalCode" type="text" inputMode="numeric" pattern="[1-9][0-9]{5}" title="Enter a valid 6-digit PIN code" required /></label>
                 <label className="save-address-option"><input name="saveAddress" type="checkbox" />Save this address to my account</label>
               </>}
-              <p>Payment method: Cash on Delivery</p>
+              <label>Payment method<select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}><option value="COD">Cash on Delivery</option><option value="UPI_ON_DELIVERY">UPI at delivery</option><option value="CARD_ON_DELIVERY">Card at delivery</option></select></label>
+              <p>Payment is collected by the delivery person. Online checkout is not configured.</p>
               {apiError && <p role="alert">{apiError}</p>}
               <button className="checkout-button" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Placing order…' : `Place order · ${formatINR(cartTotal)}`}</button>
             </form>}

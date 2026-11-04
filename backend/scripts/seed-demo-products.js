@@ -197,7 +197,22 @@ const categoryProducts = [
             ['Pain Relief Gel (30 g)', 110],
             ['Cough Lozenges (10 lozenges)', 45],
             ['Elastic Bandage Roll (1 pack)', 49],
-            ['ORS Travel Sachets (1 sachet)', 28]
+            ['ORS Travel Sachets (1 sachet)', 28],
+            ['Antihistamine Tablets (10 tablets)', 79],
+            ['Medicated Cooling Balm (25 g)', 95],
+            ['First Aid Adhesive Strips (10 strips)', 39],
+            ['Throat Soothing Spray (20 ml)', 125],
+            ['Digestive Relief Tablets (10 tablets)', 69],
+            ['Antifungal Dusting Powder (50 g)', 115],
+            ['Eye Lubricant Drops (10 ml)', 99],
+            ['Paracetamol Tablets 500 mg (10 tablets)', 35],
+            ['Ibuprofen Tablets 200 mg (10 tablets)', 59],
+            ['Cetirizine Tablets 10 mg (10 tablets)', 45],
+            ['Antacid Suspension (170 ml)', 110],
+            ['Cough Relief Syrup (100 ml)', 95],
+            ['Antiseptic Cream (20 g)', 75],
+            ['Gauze Dressing Pads (10 pieces)', 65],
+            ['Medical Adhesive Tape (1 roll)', 49]
         ]
     },
     {
@@ -280,7 +295,12 @@ const categoryProducts = [
             ['Reusable Hot Water Bag', 349],
             ['Upper Arm Blood Pressure Monitor', 1799],
             ['Digital Thermometer with Flexible Tip', 399],
-            ['Medicine Organizer Box', 199]
+            ['Medicine Organizer Box', 199],
+            ['Non-contact Infrared Thermometer', 1299],
+            ['Digital Glucose Test Strips (50 strips)', 599],
+            ['First Aid Kit for Home (basic)', 499],
+            ['Pill Cutter and Crusher', 149],
+            ['Hot and Cold Gel Pack', 199]
         ]
     },
     {
