@@ -4,7 +4,11 @@ function handleError(res, error) {
     const status = error.statusCode
         || (error.name === 'ValidationError' || error.name === 'CastError' ? 400 : 500);
     return res.status(status).json({
-        message: status >= 500 ? 'Request could not be completed' : error.message
+        message: status === 503
+            ? error.message
+            : status >= 500
+                ? 'Request could not be completed'
+                : error.message
     });
 }
 

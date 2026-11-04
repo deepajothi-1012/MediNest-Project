@@ -179,6 +179,44 @@ main { background: #fff; color: #15211e; min-height: 100vh; padding-bottom: 20px
 .auth-switch button { background: transparent; border: 0; color: #176b5e; cursor: pointer; font: inherit; font-weight: 700; }
 .auth-switch button:disabled { color: #84958d; cursor: not-allowed; }
 .auth-demo-note { color: #9aa59e; display: block; font-size: 9px; margin-top: 17px; text-align: center; }
+.auth-reset-backdrop { align-items: stretch; background: #f3f2ec; overflow-y: auto; padding: 28px; }
+.auth-reset-dialog { background: #fff; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); margin: auto; max-width: 1180px; min-height: min(760px,calc(100vh - 56px)); overflow: hidden; position: relative; width: 100%; }
+.auth-reset-story { background-color: #244b43; background-position: center; background-size: cover; display: flex; flex-direction: column; justify-content: space-between; min-height: 620px; padding: 34px clamp(28px,5vw,68px); }
+.auth-reset-brand { align-items: center; color: #fff; display: inline-flex; font-size: 21px; font-weight: 750; gap: 11px; text-decoration: none; width: fit-content; }
+.auth-reset-brand .brand-mark { flex-basis: 40px; height: 40px; }
+.auth-reset-story-copy { color: #fff; max-width: 420px; padding-bottom: 14px; }
+.auth-reset-story-copy .section-kicker { color: #d3ded0; letter-spacing: 1.5px; }
+.auth-reset-story-copy h2 { color: #fff; font-family: Georgia,"Times New Roman",serif; font-size: clamp(38px,5vw,64px); font-weight: 400; line-height: 1.02; margin: 15px 0; }
+.auth-reset-story-copy > p:last-child { color: rgb(255 255 255 / 84%); font-size: 14px; line-height: 1.7; max-width: 340px; }
+.auth-reset-panel { align-items: center; display: flex; justify-content: center; padding: 76px clamp(28px,6vw,82px); position: relative; }
+.auth-reset-panel .auth-close { right: 24px; top: 21px; }
+.auth-reset-content { max-width: 440px; width: 100%; }
+.auth-reset-content > .section-kicker { color: #ad7160; font-size: 9px; letter-spacing: 1.4px; margin: 0 0 14px; }
+.auth-reset-dialog h1 { color: #263d34; font-family: Georgia,"Times New Roman",serif; font-size: clamp(30px,3vw,42px); font-weight: 400; letter-spacing: -.8px; line-height: 1.1; margin: 0; }
+.auth-reset-instructions { color: #7d8981; font-size: 12px; line-height: 1.7; margin: 14px 0 25px; }
+.auth-reset-instructions strong { color: #54645b; font-weight: 600; overflow-wrap: anywhere; }
+.auth-reset-form { gap: 17px; }
+.auth-reset-form label { color: #52635a; font-size: 11px; gap: 8px; }
+.auth-reset-form input { border-radius: 2px; font-size: 14px; padding: 13px 14px; }
+.auth-reset-form input[name="otp"] { font-variant-numeric: tabular-nums; letter-spacing: 4px; }
+.auth-reset-form .auth-submit { border-radius: 2px; font-size: 13px; margin-top: 3px; padding: 16px; }
+.auth-reset-feedback { color: #a34a3b; font-size: 11px; line-height: 1.5; margin: -4px 0 0; }
+.auth-reset-resend { color: #7e8981; font-size: 11px; margin: 18px 0 0; text-align: center; }
+.auth-reset-resend button,.auth-reset-links button { background: transparent; border: 0; color: #a56e5b; cursor: pointer; font: inherit; font-weight: 650; padding: 0; }
+.auth-reset-resend button:disabled { color: #9ba49e; cursor: not-allowed; }
+.auth-reset-links { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; text-align: center; }
+.auth-reset-links button { font-size: 11px; }
+.auth-reset-content .auth-demo-note { margin-top: 28px; }
+@media (max-width: 760px) {
+  .auth-reset-backdrop { padding: 0; }
+  .auth-reset-dialog { grid-template-columns: 1fr; min-height: 100vh; }
+  .auth-reset-story { min-height: 235px; padding: 22px 24px; }
+  .auth-reset-story-copy { padding: 20px 0 0; }
+  .auth-reset-story-copy h2 { font-size: 34px; margin: 8px 0; max-width: 360px; }
+  .auth-reset-story-copy > p:last-child { font-size: 11px; margin: 7px 0 0; }
+  .auth-reset-panel { padding: 48px 25px 32px; }
+  .auth-reset-panel .auth-close { right: 17px; top: 14px; }
+}
 .cart-panel-heading,.cart-item,.cart-total { align-items: center; display: flex; justify-content: space-between; }.cart-panel-heading h2 { color: #244938; font-size: 19px; margin: 0; }.cart-panel-heading h2 span { color: #839188; font-size: 12px; }
 .close-cart { background: transparent; border: 0; color: #52645e; cursor: pointer; font-size: 25px; }.cart-items { list-style: none; margin: 16px 0; padding: 0; }
 .cart-item { border-bottom: 1px solid #e8eeea; gap: 12px; padding: 14px 0; }.cart-item p { color: #718278; font-size: 11px; margin: 4px 0 0; }

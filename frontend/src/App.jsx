@@ -828,17 +828,8 @@ function App() {
         setResetEmail(email)
         setResetOtp('')
         setOtpResendCountdown(OTP_RESEND_DELAY_SECONDS)
-        setAuthMode('verify')
-        setAuthFeedback('If an account exists for this email, a reset code will be sent.')
-      } else if (authMode === 'verify') {
-        const otp = formData.get('otp').toString().trim()
-        await apiRequest('/users/verify-otp', {
-          method: 'POST',
-          body: { email, otp },
-        })
-        setResetOtp(otp)
         setAuthMode('reset')
-        setAuthFeedback('Code verified. Choose a new password.')
+        setAuthFeedback('If this email is registered, a reset code will be sent. Check your inbox and spam/junk folder.')
       } else {
         await apiRequest('/users/reset-password', {
           method: 'POST',
@@ -868,9 +859,9 @@ function App() {
         body: { email: resetEmail },
       })
       setResetOtp('')
-      setAuthMode('verify')
+      setAuthMode('reset')
       setOtpResendCountdown(OTP_RESEND_DELAY_SECONDS)
-      setAuthFeedback('If an account exists for this email, a new reset code will be sent.')
+      setAuthFeedback('If this email is registered, a reset code will be sent. Check your inbox and spam/junk folder.')
     } catch (error) {
       setAuthFeedback(error.message)
     } finally {
@@ -1433,7 +1424,53 @@ function App() {
         </section>
       )}
 
-      {isAuthOpen && (
+      {isAuthOpen && (authMode === 'reset' ? (
+        <div className="auth-backdrop auth-reset-backdrop">
+          <section className="auth-reset-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+            <div className="auth-reset-story" style={{ backgroundImage: `linear-gradient(180deg, rgb(15 48 43 / 18%), rgb(15 48 43 / 78%)), url(${pharmacyLabImage})` }}>
+              <a className="auth-reset-brand" href="/" aria-label="MediNest home">
+                <BrandMark />
+                <span>MediNest</span>
+              </a>
+              <div className="auth-reset-story-copy">
+                <p className="section-kicker">CARE FOR YOUR ACCOUNT</p>
+                <h2>Everyday health, with peace of mind.</h2>
+                <p>Your account keeps your health essentials and orders close at hand.</p>
+              </div>
+            </div>
+            <div className="auth-reset-panel">
+              <button className="auth-close" type="button" onClick={() => setIsAuthOpen(false)} aria-label="Close password reset">×</button>
+              <div className="auth-reset-content">
+                <p className="section-kicker">BACK TO YOUR MEDINEST ACCOUNT</p>
+                <h1 id="auth-title">Reset your password</h1>
+                <p className="auth-reset-instructions">
+                  Enter the 6-digit code sent to <strong>{resetEmail}</strong> and choose a new password. The code expires in 10 minutes.
+                </p>
+                <form className="auth-form auth-reset-form" onSubmit={handleAuthSubmit}>
+                  <label>Verification code<input name="otp" type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength="6" autoComplete="one-time-code" value={resetOtp} onChange={(event) => setResetOtp(event.target.value)} required /></label>
+                  <label>New password<input name="newPassword" type="password" autoComplete="new-password" minLength={8} placeholder="At least 8 characters" required /></label>
+                  <label>Confirm new password<input name="confirmPassword" type="password" autoComplete="new-password" minLength={8} placeholder="Enter your new password again" required /></label>
+                  {authFeedback && <p className="auth-reset-feedback" role="status">{authFeedback}</p>}
+                  <button className="auth-submit" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Please wait…' : 'Reset password'}</button>
+                </form>
+                <p className="auth-reset-resend">
+                  Didn’t receive the code?{' '}
+                  <button type="button" onClick={resendResetCode} disabled={isSubmitting || otpResendCountdown > 0}>
+                    {otpResendCountdown > 0
+                      ? `Resend in ${Math.floor(otpResendCountdown / 60)}:${String(otpResendCountdown % 60).padStart(2, '0')}`
+                      : 'Resend code'}
+                  </button>
+                </p>
+                <div className="auth-reset-links">
+                  <button type="button" onClick={() => { setAuthMode('forgot'); setAuthFeedback('') }}>Use a different email</button>
+                  <button type="button" onClick={() => { setAuthMode('login'); setAuthFeedback('') }}>← Back to sign in</button>
+                </div>
+                <small className="auth-demo-note">Your account actions are handled securely by the MediNest API.</small>
+              </div>
+            </div>
+          </section>
+        </div>
+      ) : (
         <div className="auth-backdrop" onMouseDown={(event) => {
           if (event.target === event.currentTarget) setIsAuthOpen(false)
         }}>
@@ -1441,40 +1478,24 @@ function App() {
             <button className="auth-close" type="button" onClick={() => setIsAuthOpen(false)} aria-label="Close sign in">×</button>
             <span className="auth-mark" aria-hidden="true">+</span>
             <p className="section-kicker">WELCOME TO MEDINEST</p>
-            <h2 id="auth-title">{authMode === 'login' ? 'Welcome back.' : authMode === 'register' ? 'Create your account.' : authMode === 'forgot' ? 'Reset your password.' : authMode === 'verify' ? 'Check your email.' : 'Choose a new password.'}</h2>
-            <p className="auth-subtitle">{authMode === 'login' ? 'Sign in to view your cart, orders and account.' : authMode === 'register' ? 'Create an account to shop with MediNest.' : 'Follow the secure reset steps sent to your registered email.'}</p>
+            <h2 id="auth-title">{authMode === 'login' ? 'Welcome back.' : authMode === 'register' ? 'Create your account.' : 'Reset your password.'}</h2>
+            <p className="auth-subtitle">{authMode === 'login' ? 'Sign in to view your cart, orders and account.' : authMode === 'register' ? 'Create an account to shop with MediNest.' : 'Enter your email and we’ll send a secure reset code.'}</p>
             <form className="auth-form" onSubmit={handleAuthSubmit}>
               {authMode === 'register' && <label>Your name<input name="fullName" type="text" autoComplete="name" placeholder="Your name" required /></label>}
               <label>Email address<input name="email" type="email" autoComplete="email" placeholder="you@example.com" value={resetEmail} onChange={(event) => setResetEmail(event.target.value)} required /></label>
-              {(authMode === 'verify' || authMode === 'reset') && <label>6-digit code<input name="otp" type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength="6" autoComplete="one-time-code" value={resetOtp} onChange={(event) => setResetOtp(event.target.value)} required /></label>}
               {(authMode === 'login' || authMode === 'register') && <label>Password<input name="password" type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} minLength={8} placeholder="At least 8 characters" required /></label>}
-              {authMode === 'reset' && <>
-                <label>New password<input name="newPassword" type="password" autoComplete="new-password" minLength={8} required /></label>
-                <label>Confirm new password<input name="confirmPassword" type="password" autoComplete="new-password" minLength={8} required /></label>
-              </>}
-              <button className="auth-submit" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Please wait…' : authMode === 'login' ? 'Sign in' : authMode === 'register' ? 'Create account' : authMode === 'forgot' ? 'Send reset code' : authMode === 'verify' ? 'Verify code' : 'Reset password'}</button>
+              <button className="auth-submit" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Please wait…' : authMode === 'login' ? 'Sign in' : authMode === 'register' ? 'Create account' : 'Send reset code'}</button>
             </form>
-            {(authMode === 'verify' || authMode === 'reset') && (
-              <p className="auth-switch">
-                {authMode === 'verify' ? 'Didn’t receive the code?' : 'Code expired?'}
-                {' '}
-                <button type="button" onClick={resendResetCode} disabled={isSubmitting || otpResendCountdown > 0}>
-                  {otpResendCountdown > 0
-                    ? `Resend in ${Math.floor(otpResendCountdown / 60)}:${String(otpResendCountdown % 60).padStart(2, '0')}`
-                    : 'Resend code'}
-                </button>
-              </p>
-            )}
             {authFeedback && <p className="auth-switch" role="status">{authFeedback}</p>}
             <p className="auth-switch">
               {authMode === 'login' && <>New to MediNest? <button type="button" onClick={() => { setAuthMode('register'); setAuthFeedback('') }}>Create account</button> · <button type="button" onClick={() => { setAuthMode('forgot'); setAuthFeedback('') }}>Forgot password?</button></>}
               {authMode === 'register' && <>Already have an account? <button type="button" onClick={() => { setAuthMode('login'); setAuthFeedback('') }}>Sign in</button></>}
-              {['forgot', 'verify', 'reset'].includes(authMode) && <button type="button" onClick={() => { setAuthMode('login'); setAuthFeedback('') }}>Back to sign in</button>}
+              {authMode === 'forgot' && <button type="button" onClick={() => { setAuthMode('login'); setAuthFeedback('') }}>Back to sign in</button>}
             </p>
             <small className="auth-demo-note">Your account actions are handled by the MediNest API.</small>
           </section>
         </div>
-      )}
+      ))}
     </main>
   )
 }
