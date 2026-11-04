@@ -31,8 +31,43 @@ function detectPrescriptionFile(buffer) {
     if (buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
         return { fileExtension: 'jpg', mimeType: 'image/jpeg' };
     }
+    if (['GIF87a', 'GIF89a'].includes(buffer.subarray(0, 6).toString('ascii'))) {
+        return { fileExtension: 'gif', mimeType: 'image/gif' };
+    }
+    if (
+        buffer.subarray(0, 4).toString('ascii') === 'RIFF'
+        && buffer.subarray(8, 12).toString('ascii') === 'WEBP'
+    ) {
+        return { fileExtension: 'webp', mimeType: 'image/webp' };
+    }
+    if (buffer.subarray(0, 2).toString('ascii') === 'BM') {
+        return { fileExtension: 'bmp', mimeType: 'image/bmp' };
+    }
+    if (
+        (buffer.subarray(0, 4).equals(Buffer.from([0x49, 0x49, 0x2a, 0x00]))
+            || buffer.subarray(0, 4).equals(Buffer.from([0x4d, 0x4d, 0x00, 0x2a])))
+    ) {
+        return { fileExtension: 'tiff', mimeType: 'image/tiff' };
+    }
+    if (
+        buffer.length >= 12
+        && buffer.subarray(4, 8).toString('ascii') === 'ftyp'
+        && ['avif', 'avis'].includes(buffer.subarray(8, 12).toString('ascii'))
+    ) {
+        return { fileExtension: 'avif', mimeType: 'image/avif' };
+    }
+    if (
+        buffer.length >= 12
+        && buffer.subarray(4, 8).toString('ascii') === 'ftyp'
+        && ['heic', 'heix', 'hevc', 'hevx', 'heif', 'heis', 'hevm', 'hevs', 'mif1', 'msf1'].includes(buffer.subarray(8, 12).toString('ascii'))
+    ) {
+        const isHeif = ['heif', 'heis'].includes(buffer.subarray(8, 12).toString('ascii'));
+        return isHeif
+            ? { fileExtension: 'heif', mimeType: 'image/heif' }
+            : { fileExtension: 'heic', mimeType: 'image/heic' };
+    }
 
-    throw serviceError('Upload a valid PDF, JPEG, or PNG prescription');
+    throw serviceError('Upload a valid PDF or raster image (JPEG, PNG, GIF, WebP, BMP, TIFF, AVIF, or HEIC)');
 }
 
 class PrescriptionService {
@@ -44,10 +79,10 @@ class PrescriptionService {
         const product = await Product.findOne({
             _id: productId,
             isActive: true,
-            requiresPrescription: true
+            category: 'Medicines'
         }).select('_id');
         if (!product) {
-            throw serviceError('Prescription upload is only available for active prescription-required products', 404);
+            throw serviceError('Choose an active medicine from the catalog', 404);
         }
 
         const file = detectPrescriptionFile(buffer);

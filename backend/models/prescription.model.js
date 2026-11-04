@@ -21,12 +21,23 @@ const prescriptionSchema = new mongoose.Schema(
         },
         fileExtension: {
             type: String,
-            enum: ['pdf', 'jpg', 'png'],
+            enum: ['pdf', 'jpg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'avif', 'heic', 'heif'],
             required: true
         },
         mimeType: {
             type: String,
-            enum: ['application/pdf', 'image/jpeg', 'image/png'],
+            enum: [
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'image/webp',
+                'image/bmp',
+                'image/tiff',
+                'image/avif',
+                'image/heic',
+                'image/heif'
+            ],
             required: true
         },
         status: {

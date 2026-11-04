@@ -86,6 +86,52 @@ const homeCategories = [
   },
 ]
 
+const homeShopCategories = [
+  { category: 'Medicines', image: medicineTabletsImage },
+  { category: 'Vitamins', image: vitaminsCategoryImage },
+  { category: 'Wellness', image: wellnessImage },
+  { category: 'Personal care', image: selfCareImage },
+  { category: 'Baby products', image: babyCareImage },
+  { category: 'Ayurveda', image: herbalProductsImage },
+  { category: 'Devices', image: medicalDeviceImage },
+  { category: 'Oral care', image: oralCareImage },
+]
+
+const homeHealthArticles = [
+  {
+    category: 'MEDICINE CABINET',
+    title: 'A few simple ways to organize home medicines',
+    summary: 'Keep products in their original packs, check expiry dates, and follow the storage directions on each label.',
+    image: medicineTabletsImage,
+    link: getCategoryHref('Medicines'),
+    linkText: 'Shop medicines',
+  },
+  {
+    category: 'EVERYDAY WELLNESS',
+    title: 'Build a wellness routine that works for you',
+    summary: 'Small, consistent habits can make daily self-care easier to maintain.',
+    image: wellnessImage,
+    link: getCategoryHref('Wellness'),
+    linkText: 'Explore wellness',
+  },
+  {
+    category: 'CARE AT HOME',
+    title: 'Choosing health tools for home',
+    summary: 'Compare product details and use health devices according to the supplied instructions.',
+    image: medicalDeviceImage,
+    link: getCategoryHref('Devices'),
+    linkText: 'Browse health tools',
+  },
+  {
+    category: 'PERSONAL CARE',
+    title: 'Make room for a simple self-care routine',
+    summary: 'Find everyday personal-care essentials for the routines that suit you.',
+    image: selfCareImage,
+    link: getCategoryHref('Personal care'),
+    linkText: 'Explore personal care',
+  },
+]
+
 const homeHeroSlides = [
   {
     image: vitaminsCategoryImage,
@@ -170,19 +216,22 @@ const requestedCategory = pageParams.get('category')
 const isCartPage = pageParams.get('view') === 'cart'
 const isWishlistPage = pageParams.get('view') === 'wishlist'
 const isOrdersPage = pageParams.get('view') === 'orders'
-const isBrandsPage = pageParams.get('view') === 'brands'
+const isPrescriptionPage = pageParams.get('view') === 'prescriptions'
+const isAccountPage = pageParams.get('view') === 'account'
 const initialBrand = pageParams.get('brand') || ''
-const initialCategory = categories.includes(requestedCategory) ? requestedCategory : 'All products'
+const initialCategory = categories.includes(requestedCategory)
+  ? requestedCategory
+  : pageParams.get('view') === 'brands' ? 'Medicines' : 'All products'
 function getCategoryHref(category) {
   return category === 'All products' ? '/' : `/?category=${encodeURIComponent(category)}`
 }
 
 const conditions = [
-  { name: 'Diabetes', icon: '◉', color: 'mint' },
-  { name: 'Heart health', icon: '♡', color: 'lavender' },
-  { name: 'Stomach health', icon: '◒', color: 'peach' },
-  { name: 'Pain relief', icon: '✳', color: 'blue' },
-  { name: 'Liver health', icon: '◇', color: 'rose' },
+  { name: 'Diabetes', searchTerms: ['glucose'], image: medicalDeviceImage, color: 'mint' },
+  { name: 'Heart health', searchTerms: ['blood pressure'], image: medicalDeviceImage, color: 'lavender' },
+  { name: 'Stomach health', searchTerms: ['antacid', 'rehydration', 'ORS'], image: pharmacyOrangePillImage, color: 'peach' },
+  { name: 'Pain relief', searchTerms: ['pain', 'paracetamol'], image: pharmacyPillsImage, color: 'blue' },
+  { name: 'Liver health', searchTerms: ['liver'], image: herbalProductsImage, color: 'rose' },
 ]
 
 function BrandMark() {
@@ -213,16 +262,42 @@ function UploadIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8"><path d="M12 15V4m-4 4 4-4 4 4" /><path d="M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5" /></svg>
 }
 
+const brandLogoMarks = [
+  <g key="hair" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="2.4"><path d="M47 14c-7 5-7 13 0 18" /><path d="M56 11c-8 7-8 17 0 23" /><path d="M65 11c8 7 8 17 0 23" /><path d="M74 14c7 5 7 13 0 18" /></g>,
+  <path key="oral" d="M48 13c4-5 10-3 12 0 2-3 8-5 12 0 5 6-1 13-3 19-1 4-4 5-6 2l-3-7-3 7c-2 3-5 2-6-2-2-6-8-13-3-19Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2.4" />,
+  <g key="tools" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4"><path d="M47 13v8a13 13 0 0 0 26 0v-8" /><path d="M47 13h7v8h-7zm19 0h7v8h-7z" /><path d="M60 34v-4a5 5 0 0 1 5-5h3" /><circle cx="70" cy="25" r="2" /></g>,
+  <g key="ayurveda" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4"><path d="M60 34V15" /><path d="M60 25c-10 0-15-5-15-12 9 0 15 3 15 12Z" /><path d="M60 21c0-9 5-13 15-13 0 8-5 13-15 13Z" /></g>,
+  <path key="baby" d="M60 33S45 24 45 16a7 7 0 0 1 13-4 7 7 0 0 1 13 4c0 8-11 15-11 15Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2.4" />,
+  <path key="care" d="M60 9C54 18 48 23 48 29a12 12 0 0 0 24 0c0-6-6-11-12-20Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2.4" />,
+  <g key="wellness" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="60" cy="21" r="4" /><ellipse cx="60" cy="12" rx="4" ry="7" /><ellipse cx="60" cy="30" rx="4" ry="7" /><ellipse cx="51" cy="21" rx="7" ry="4" /><ellipse cx="69" cy="21" rx="7" ry="4" /></g>,
+  <g key="nutrition" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4"><path d="M60 34V12" /><path d="M60 17c-7 0-10-3-10-8 7 0 10 3 10 8Zm0 7c7 0 10-3 10-8-7 0-10 3-10 8Zm0-1c-7 0-10-3-10-8 7 0 10 3 10 8Z" /></g>,
+  <g key="essentials" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M51 12h18a9 9 0 0 1 0 18H51a9 9 0 0 1 0-18Z" /><path d="m57 13 12 16" /></g>,
+]
+
+function BrandLogo({ brand, index }) {
+  const initials = brand.split(' ').map((word) => word[0]).join('').replace('&', '')
+  return (
+    <svg className={`brand-logo brand-logo-${index + 1}`} viewBox="0 0 120 100" role="img" aria-label={`${brand} logo`}>
+      {brandLogoMarks[index % brandLogoMarks.length]}
+      <text x="60" y="77" textAnchor="middle">{initials}</text>
+    </svg>
+  )
+}
+
 function ThermometerIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8"><path d="M14 14.8V5a3 3 0 0 0-6 0v9.8a5 5 0 1 0 6 0Z" /><path d="M11 11v7" /></svg>
 }
 
 function App() {
   const [search, setSearch] = useState('')
+  const [activeHealthIssue, setActiveHealthIssue] = useState('')
   const [activeHeroSlide, setActiveHeroSlide] = useState(0)
   const heroTouchStart = useRef(null)
+  const healthIssueScrollerRef = useRef(null)
+  const deliveryPincodeInputRef = useRef(null)
   const activeCategory = initialCategory
   const [activeBrand, setActiveBrand] = useState(initialBrand)
+  const isMedicinesCategory = initialCategory === 'Medicines'
   const [medicines, setMedicines] = useState([])
   const [wishlistIds, setWishlistIds] = useState(() => {
     try {
@@ -258,6 +333,13 @@ function App() {
   const [adminPrescriptions, setAdminPrescriptions] = useState([])
   const [prescriptionProductId, setPrescriptionProductId] = useState('')
   const [prescriptionFeedback, setPrescriptionFeedback] = useState('')
+  const [prescriptionProductsLoading, setPrescriptionProductsLoading] = useState(true)
+  const [prescriptionProductsError, setPrescriptionProductsError] = useState('')
+  const [isPrescriptionFormOpen, setIsPrescriptionFormOpen] = useState(false)
+  const [deliveryPincode, setDeliveryPincode] = useState(() => window.localStorage.getItem('medinest-delivery-pincode') || '')
+  const [deliveryPincodeDraft, setDeliveryPincodeDraft] = useState('')
+  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false)
+  const [locationPickerError, setLocationPickerError] = useState('')
   const [apiError, setApiError] = useState('')
   const [authFeedback, setAuthFeedback] = useState('')
   const [resetEmail, setResetEmail] = useState('')
@@ -299,6 +381,17 @@ function App() {
   }, [authMode, isAuthOpen])
 
   useEffect(() => {
+    if (!isLocationPickerOpen) return undefined
+
+    deliveryPincodeInputRef.current?.focus()
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setIsLocationPickerOpen(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isLocationPickerOpen])
+
+  useEffect(() => {
     const timer = window.setInterval(() => {
       setActiveHeroSlide((current) => (current + 1) % homeHeroSlides.length)
     }, HERO_SLIDE_INTERVAL_MS)
@@ -311,17 +404,22 @@ function App() {
     const timer = window.setTimeout(async () => {
       setCatalogLoading(true)
       setApiError('')
-      const params = new URLSearchParams()
-      if (search.trim()) params.set('search', search.trim())
-      if (activeCategory !== 'All products') params.set('category', activeCategory)
-      if (activeBrand) params.set('brand', activeBrand)
       try {
-        const query = params.toString()
-        const result = await apiRequest(`/products${query ? `?${query}` : ''}`)
+        const selectedCondition = conditions.find((condition) => condition.name === activeHealthIssue)
+        const searchTerms = selectedCondition?.searchTerms || [search.trim()]
+        const productsByTerm = await Promise.all(searchTerms.map(async (term) => {
+          const params = new URLSearchParams()
+          if (term) params.set('search', term)
+          if (activeCategory !== 'All products') params.set('category', activeCategory)
+          if (activeBrand) params.set('brand', activeBrand)
+          const query = params.toString()
+          const result = await apiRequest(`/products${query ? `?${query}` : ''}`)
+          return result.products || []
+        }))
         if (active) {
-          const products = result.products || []
+          const products = [...new Map(productsByTerm.flat().map((product) => [product._id, product])).values()]
           setMedicines(products.map(mapProduct))
-          if (!search.trim() && activeCategory === 'All products' && !activeBrand) {
+          if (!search.trim() && !activeHealthIssue && activeCategory === 'All products' && !activeBrand) {
             setBrands([...new Set(products.map((product) => product.brand).filter(Boolean))])
           }
         }
@@ -339,16 +437,36 @@ function App() {
       active = false
       window.clearTimeout(timer)
     }
-  }, [search, activeCategory, activeBrand])
+  }, [search, activeHealthIssue, activeCategory, activeBrand])
+
+  useEffect(() => {
+    if (!isMedicinesCategory) return undefined
+
+    let active = true
+    apiRequest('/products?category=Medicines')
+      .then((result) => {
+        if (active) {
+          setBrands([...new Set((result.products || []).map((product) => product.brand).filter(Boolean))])
+        }
+      })
+      .catch((error) => {
+        if (active) setApiError(error.message)
+      })
+
+    return () => { active = false }
+  }, [isMedicinesCategory])
 
   useEffect(() => {
     let active = true
-    apiRequest('/products?requiresPrescription=true')
+    apiRequest('/products')
       .then((result) => {
         if (active) setPrescriptionProducts(result.products || [])
       })
       .catch((error) => {
-        if (active) setApiError(error.message)
+        if (active) setPrescriptionProductsError(error.message)
+      })
+      .finally(() => {
+        if (active) setPrescriptionProductsLoading(false)
       })
 
     return () => { active = false }
@@ -424,9 +542,17 @@ function App() {
   const filteredMedicines = isWishlistPage
     ? medicines.filter((medicine) => wishlistIds.includes(medicine.id))
     : medicines
+  const homeHealthProducts = medicines.filter((medicine) => medicine.stock > 0).slice(0, 4)
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0)
   const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0)
-  const isCatalogPage = initialCategory !== 'All products' || isCartPage || isWishlistPage || isOrdersPage || isBrandsPage || Boolean(initialBrand)
+  const isCatalogPage = initialCategory !== 'All products'
+    || isCartPage
+    || isWishlistPage
+    || isOrdersPage
+    || isPrescriptionPage
+    || isAccountPage
+    || Boolean(initialBrand)
+  const prescriptionHref = '/?view=prescriptions'
 
   function toggleWishlist(productId) {
     setWishlistIds((current) => current.includes(productId)
@@ -674,14 +800,28 @@ function App() {
     const file = formData.get('prescriptionFile')
     const productId = formData.get('productId')
     if (!(file instanceof File) || !file.size || !productId) {
-      setPrescriptionFeedback('Choose a product and prescription file.')
+      setPrescriptionFeedback('Choose a medicine and prescription file.')
+      return
+    }
+    const fileExtension = file.name.split('.').pop()?.toLowerCase()
+    const supportedImageExtensions = new Set([
+      'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'avif', 'heic', 'heif',
+    ])
+    const isPdf = file.type === 'application/pdf' || fileExtension === 'pdf'
+    const isImage = (file.type.startsWith('image/') && file.type !== 'image/svg+xml')
+      || supportedImageExtensions.has(fileExtension)
+    if (
+      file.size > 5 * 1024 * 1024
+      || (!isPdf && !isImage)
+    ) {
+      setPrescriptionFeedback('Choose a PDF or supported image file (JPEG, PNG, GIF, WebP, BMP, TIFF, AVIF, or HEIC) that is 5 MB or smaller.')
       return
     }
 
     setIsSubmitting(true)
     setPrescriptionFeedback('')
     try {
-      await apiRequest(`/prescriptions/${productId}`, {
+      const result = await apiRequest(`/prescriptions/${productId}`, {
         method: 'POST',
         token,
         headers: { 'Content-Type': 'application/octet-stream' },
@@ -689,8 +829,18 @@ function App() {
       })
       form.reset()
       setPrescriptionProductId('')
-      await refreshPrescriptions()
-      setPrescriptionFeedback('Prescription uploaded securely and submitted for review.')
+      if (result.prescription) {
+        setPrescriptions((current) => [
+          result.prescription,
+          ...current.filter((prescription) => prescription._id !== result.prescription._id),
+        ])
+      }
+      setPrescriptionFeedback('Successfully submitted! Your prescription is now awaiting review.')
+      try {
+        await refreshPrescriptions()
+      } catch (refreshError) {
+        setPrescriptionFeedback(`Successfully submitted! Your prescription is awaiting review, but submissions could not refresh: ${refreshError.message}`)
+      }
     } catch (error) {
       setPrescriptionFeedback(error.message)
     } finally {
@@ -704,7 +854,19 @@ function App() {
         ? `/prescriptions/admin/${prescriptionId}/file`
         : `/prescriptions/mine/${prescriptionId}/file`
       const file = await apiDownload(path, token)
-      const extension = file.type === 'application/pdf' ? 'pdf' : file.type === 'image/png' ? 'png' : 'jpg'
+      const extensionByMimeType = {
+        'application/pdf': 'pdf',
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/gif': 'gif',
+        'image/webp': 'webp',
+        'image/bmp': 'bmp',
+        'image/tiff': 'tiff',
+        'image/avif': 'avif',
+        'image/heic': 'heic',
+        'image/heif': 'heif',
+      }
+      const extension = extensionByMimeType[file.type] || 'bin'
       const url = window.URL.createObjectURL(file)
       const link = document.createElement('a')
       link.href = url
@@ -983,12 +1145,49 @@ function App() {
     ))
   }
 
+  function applyDeliveryPincode(event) {
+    event.preventDefault()
+    const pincode = deliveryPincodeDraft.trim()
+    if (!/^[1-9]\d{5}$/.test(pincode)) {
+      setLocationPickerError('Enter a valid 6-digit Indian PIN code.')
+      return
+    }
+
+    setDeliveryPincode(pincode)
+    setLocationPickerError('')
+    try {
+      window.localStorage.setItem('medinest-delivery-pincode', pincode)
+      setIsLocationPickerOpen(false)
+    } catch {
+      setLocationPickerError('Your location is updated for this visit, but could not be saved for next time.')
+    }
+  }
+
+  function openLocationPicker() {
+    setDeliveryPincodeDraft(deliveryPincode)
+    setLocationPickerError('')
+    setIsLocationPickerOpen(true)
+  }
+
+  function scrollHealthIssues(direction) {
+    const scroller = healthIssueScrollerRef.current
+    if (!scroller) return
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    scroller.scrollBy({
+      left: direction * Math.min(scroller.clientWidth * 0.8, 620),
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    })
+  }
+
   return (
     <main id="top" className={[
       isCatalogPage && 'catalog-page',
       isCartPage && 'cart-page',
       isOrdersPage && 'orders-page',
-      isBrandsPage && 'brands-page',
+      isMedicinesCategory && 'medicines-category-page',
+      isPrescriptionPage && 'prescription-page',
+      isAccountPage && 'account-page',
     ].filter(Boolean).join(' ')}>
       <header className="store-header">
         <div className="store-header-main">
@@ -996,12 +1195,20 @@ function App() {
             <BrandMark />
             <span>Medi<span>Nest</span><small>MEDICINE & HEALTH</small></span>
           </a>
-          <div className="market-delivery"><span aria-hidden="true">⌖</span><span><small>Delivering across</small><strong>India</strong></span></div>
+          <button className="market-delivery" type="button" onClick={openLocationPicker} aria-haspopup="dialog" aria-label="Choose delivery location">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+            <span>
+              <small>{deliveryPincode ? 'Deliver to' : 'Delivering across'}</small>
+              <strong>{deliveryPincode
+                ? `${deliveryPincode.startsWith('600') ? 'Chennai ' : ''}${deliveryPincode}`
+                : 'India'}</strong>
+            </span>
+          </button>
           <label className="market-search">
             <span className="market-search-scope">All</span>
             <span className="sr-only">Search medicines and health products</span>
-            <input type="search" placeholder="Search medicines and health products" value={search} onChange={(event) => setSearch(event.target.value)} />
-            {search && <button type="button" onClick={() => setSearch('')} aria-label="Clear search">×</button>}
+            <input type="search" placeholder="Search medicines and health products" value={search} onChange={(event) => { setActiveHealthIssue(''); setSearch(event.target.value) }} />
+            {search && <button type="button" onClick={() => { setActiveHealthIssue(''); setSearch('') }} aria-label="Clear search">×</button>}
             <span className="market-search-icon" aria-hidden="true"><SearchIcon /></span>
           </label>
           <div className="header-actions">
@@ -1030,14 +1237,14 @@ function App() {
         <nav className="main-nav" aria-label="Main navigation">
           <a className={!isCatalogPage ? 'selected' : ''} href="/">Shop all</a>
           <a className={initialCategory === 'Medicines' ? 'selected' : ''} href="/?category=Medicines">Medicines</a>
-          <a className={initialCategory === 'Vitamins' ? 'selected' : ''} href="/?category=Vitamins">Vitamins & nutrition</a>
+          <a className={initialCategory === 'Wellness' ? 'selected' : ''} href="/?category=Wellness">Health products</a>
+          <a className={initialCategory === 'Devices' ? 'selected' : ''} href="/?category=Devices">Health tools</a>
           <a className={initialCategory === 'Personal care' ? 'selected' : ''} href="/?category=Personal%20care">Personal care</a>
-          <a className={isCartPage ? 'selected' : ''} href="/?view=cart">Cart{cartCount > 0 ? ` (${cartCount})` : ''}</a>
-          <a className={isBrandsPage ? 'selected' : ''} href="/?view=brands">Brands</a>
-          <a className={isOrdersPage ? 'selected' : ''} href="/?view=orders">Your orders</a>
-          <a href="#upload-prescription">Upload prescription</a>
-          <a href="#conditions">Shop by health issue</a>
-          <a href="#refills">Medicine reminders</a>
+          <a className={isPrescriptionPage ? 'selected' : ''} href={prescriptionHref}>Prescription service</a>
+          <a href="#home-health-articles-title">Health insights</a>
+          <a href="#conditions">Health concerns</a>
+          <a className={isOrdersPage ? 'selected' : ''} href="/?view=orders">Orders</a>
+          {token && <a className={isAccountPage ? 'selected' : ''} href="/?view=account">Account</a>}
           {userRole === 'admin' && <a href="#admin">Admin</a>}
         </nav>
       </header>
@@ -1091,12 +1298,69 @@ function App() {
         </div>
       </section>
 
+      <section className="home-shop-categories" aria-labelledby="home-shop-categories-title">
+        <div className="home-shop-categories-heading">
+          <div>
+            <p className="section-kicker">EXPLORE MEDINEST</p>
+            <h2 id="home-shop-categories-title">Shop by category</h2>
+          </div>
+          <a href="/?category=Medicines">Browse all products <span aria-hidden="true">→</span></a>
+        </div>
+        <div className="home-shop-category-grid">
+          {homeShopCategories.map(({ category, image }) => (
+            <a className="home-shop-category" href={getCategoryHref(category)} key={category}>
+              <span className="home-shop-category-image"><img src={image} alt="" loading="lazy" /></span>
+              <span>{categoryLabels[category] || category}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="home-health-products" aria-labelledby="home-health-products-title">
+        <div className="home-content-heading">
+          <div>
+            <p className="section-kicker">EVERYDAY CARE</p>
+            <h2 id="home-health-products-title">Popular health essentials</h2>
+          </div>
+          <a href="/?category=Medicines">View products <span aria-hidden="true">→</span></a>
+        </div>
+        {catalogLoading ? (
+          <p className="home-products-status" role="status">Loading products…</p>
+        ) : homeHealthProducts.length ? (
+          <div className="home-health-product-grid">
+            {homeHealthProducts.map((product) => (
+              <article className="home-health-product" key={product.id}>
+                <a className="home-health-product-image" href={getCategoryHref(product.category)} aria-label={`Browse ${categoryLabels[product.category] || product.category}`}>
+                  <img src={product.image} alt="" loading="lazy" />
+                </a>
+                <div className="home-health-product-details">
+                  {product.oldPrice > product.price && (
+                    <span className="home-health-product-discount">
+                      {Math.round((1 - product.price / product.oldPrice) * 100)}% OFF
+                    </span>
+                  )}
+                  <p className="home-health-product-brand">{product.brand} · {categoryLabels[product.category] || product.category}</p>
+                  <h3>{product.name}</h3>
+                  <div className="home-health-product-price">
+                    {product.oldPrice > product.price && <del>{formatINR(product.oldPrice)}</del>}
+                    <strong>{formatINR(product.price)}</strong>
+                  </div>
+                  <button type="button" onClick={() => addToCart(product)} disabled={product.stock < 1}>Add to cart</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="home-products-status">Products will appear here when the catalog is available.</p>
+        )}
+      </section>
+
       <section className="service-tiles" id="services" aria-label="Popular services">
         <a className="service-tile rx-tile" href="#medicines">
           <span className="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8"><path d="M6 3h9l4 4v14H6z" /><path d="M14 3v5h5M12 11v6m-3-3h6" /></svg><b>+</b></span>
           <span><strong>Save on medicines</strong><small>SHOP MEDICINES</small></span><span className="tile-arrow">›</span>
         </a>
-        <a className="service-tile upload-tile" href="#upload-prescription">
+        <a className="service-tile upload-tile" href={prescriptionHref}>
           <span className="tile-icon" aria-hidden="true"><UploadIcon /></span>
           <span><strong>Prescription upload</strong><small>PDF or clear photo</small></span><span className="tile-arrow">›</span>
         </a>
@@ -1108,6 +1372,134 @@ function App() {
           <span className="tile-icon" aria-hidden="true"><ThermometerIcon /></span>
           <span><strong>Health tools</strong><small>SHOP DEVICES</small></span><span className="tile-arrow">›</span>
         </a>
+      </section>
+
+      <section className="prescription-panel" id="upload-prescription" aria-labelledby="prescription-title">
+        {isPrescriptionPage && (
+          <div className="prescription-order-hero">
+            <div className="prescription-order-hero-copy">
+              <p>MEDINEST PRESCRIPTION SERVICE</p>
+              <h1>Order via Prescription</h1>
+              <span>Upload your prescription and submit it for a secure review.</span>
+              <div className="prescription-order-trust">
+                <span><b aria-hidden="true">✓</b> Private file handling</span>
+                <span><b aria-hidden="true">Rx</b> Review status in your account</span>
+                <span><b aria-hidden="true">↥</b> PDF, JPG or PNG</span>
+              </div>
+            </div>
+            <div className="prescription-order-hero-art" aria-hidden="true">
+              <svg viewBox="0 0 220 190" fill="none">
+                <path d="M37 18h102l36 36v112a9 9 0 0 1-9 9H37a9 9 0 0 1-9-9V27a9 9 0 0 1 9-9Z" fill="#F5FAF8" />
+                <path d="M139 18v27a9 9 0 0 0 9 9h27" fill="#DCEBE5" />
+                <path d="M139 18v27a9 9 0 0 0 9 9h27" stroke="#C1D8CE" strokeWidth="3" />
+                <circle cx="69" cy="79" r="20" fill="#D8EDE3" />
+                <path d="M69 68v22m-11-11h22" stroke="#26765C" strokeLinecap="round" strokeWidth="6" />
+                <path d="M57 117h89M57 132h72M57 147h52" stroke="#B8D0C5" strokeLinecap="round" strokeWidth="6" />
+                <path d="M177 113c17 0 27 13 27 28 0 15-10 26-23 26-12 0-19-9-19-19 0-8 5-13 12-13 6 0 10 4 10 9" stroke="#6EAF91" strokeLinecap="round" strokeWidth="8" />
+                <circle cx="193" cy="162" r="7" fill="#F2B75F" />
+              </svg>
+            </div>
+          </div>
+        )}
+        <div className="prescription-how-card">
+          <div className="prescription-how-upload">
+            <svg className="prescription-illustration" viewBox="0 0 180 150" fill="none" aria-hidden="true">
+              <ellipse cx="83" cy="137" rx="72" ry="7" fill="#CBD8E8" />
+              <path d="M37 18a9 9 0 0 1 9-9h92a9 9 0 0 1 9 9v103H37V18Z" fill="#8CB3EC" />
+              <path d="M28 25a9 9 0 0 1 9-9h91v105a9 9 0 0 1-9 9H28V25Z" fill="#A9C9F5" />
+              <path d="M37 16h90v105a9 9 0 0 1-9 9H37a9 9 0 0 1-9-9V25a9 9 0 0 1 9-9Z" fill="#9FC2F3" />
+              <circle cx="49" cy="43" r="13" fill="#6F9FE4" />
+              <text x="49" y="47" fill="white" fontSize="11" fontWeight="700" textAnchor="middle">Rx</text>
+              <path d="M42 67h60M42 78h60M42 89h60M42 100h47" stroke="#DDEBFF" strokeLinecap="round" strokeWidth="4" />
+              <path d="M143 41v64" stroke="#6395D8" strokeLinecap="round" strokeWidth="7" />
+              <path d="M143 105v14" stroke="#6395D8" strokeLinecap="round" strokeWidth="7" />
+              <path d="M138 36h10v15h-10z" fill="#78A6E5" />
+              <path d="M138 119h10v9h-10z" fill="#78A6E5" />
+              <path d="M137 34h12" stroke="#6395D8" strokeLinecap="round" strokeWidth="3" />
+            </svg>
+            <div className="prescription-how-copy">
+              <p className="section-kicker">SECURE MEDICINE REVIEW</p>
+              <h2 id="prescription-title">Order with Prescription</h2>
+              <p>Upload your prescription and we’ll help with your medicine request.</p>
+              {isPrescriptionPage ? (
+                <button
+                  className="prescription-upload-trigger"
+                  type="button"
+                  onClick={() => {
+                    if (token) {
+                      setIsPrescriptionFormOpen((isOpen) => !isOpen)
+                      return
+                    }
+                    setAuthMode('login')
+                    setAuthFeedback('')
+                    setIsAuthOpen(true)
+                  }}
+                  aria-expanded={isPrescriptionFormOpen}
+                  aria-controls="prescription-upload-form"
+                >
+                  <UploadIcon />
+                  {isPrescriptionFormOpen ? 'Close upload' : 'Upload prescription'}
+                </button>
+              ) : (
+                <a className="prescription-upload-trigger" href="/?view=prescriptions">
+                  <UploadIcon />
+                  Upload
+                </a>
+              )}
+            </div>
+            {isPrescriptionPage && token && isPrescriptionFormOpen && (
+              <div className="prescription-form-panel" id="prescription-upload-form">
+                <p>Select a medicine and upload a PDF or image (JPEG, PNG, GIF, WebP, BMP, TIFF, AVIF, or HEIC/HEIF; up to 5 MB).</p>
+                <form className="prescription-upload-form" onSubmit={uploadPrescription}>
+                    <label>Medicine
+                    <select name="productId" value={prescriptionProductId} onChange={(event) => setPrescriptionProductId(event.target.value)} disabled={prescriptionProductsLoading || prescriptionProducts.length === 0} required>
+                        <option value="">{prescriptionProductsLoading ? 'Loading medicines…' : prescriptionProducts.length ? 'Select a medicine' : 'No medicines available'}</option>
+                      {prescriptionProducts.map((product) => <option key={product._id} value={product._id}>{product.name}</option>)}
+                    </select>
+                  </label>
+                  <label>Prescription file
+                    <input name="prescriptionFile" type="file" accept="application/pdf,image/*,.heic,.heif,.tif,.tiff" disabled={prescriptionProductsLoading || prescriptionProducts.length === 0} required />
+                  </label>
+                  <button className="checkout-button" type="submit" disabled={isSubmitting || prescriptionProductsLoading || prescriptionProducts.length === 0}>
+                    {isSubmitting ? 'Uploading…' : 'Upload for review'}
+                  </button>
+                </form>
+                {!prescriptionProductsLoading && !prescriptionProductsError && prescriptionProducts.length === 0 && (
+                  <p className="prescription-empty-state" role="status">
+                    No active products are available to attach to this request.
+                  </p>
+                )}
+                {prescriptionProductsError && <p className="prescription-note" role="alert">{prescriptionProductsError}</p>}
+                {prescriptionFeedback && <p className="prescription-note" role="status">{prescriptionFeedback}</p>}
+              </div>
+            )}
+          </div>
+          <div className="prescription-how-steps">
+            <h3>How does this work?</h3>
+            <ol>
+              <li><span>1</span><p>Sign in to your MediNest account</p></li>
+              <li><span>2</span>              <p>Select a medicine and upload your prescription</p></li>
+              <li><span>3</span><p>An administrator reviews your submission</p></li>
+              <li><span>4</span><p>Check its review status in your account</p></li>
+            </ol>
+          </div>
+        </div>
+        {token && (
+          <div className="prescription-list">
+            <h3>Your submissions</h3>
+            {prescriptions.length === 0 && <p>No prescriptions submitted yet.</p>}
+            {prescriptions.map((prescription) => (
+              <article className="prescription-row" key={prescription._id}>
+                <div>
+                  <strong>{prescription.productId?.name || 'Product'}</strong>
+                  <small>{prescription.status} · {new Date(prescription.createdAt).toLocaleDateString()}</small>
+                  {prescription.reviewNote && <small>Review note: {prescription.reviewNote}</small>}
+                </div>
+                <button type="button" onClick={() => downloadPrescription(prescription._id)}>Download</button>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="home-categories" aria-label="Browse health categories">
@@ -1137,8 +1529,8 @@ function App() {
         <div className="catalog-heading">
           <div>
             <p className="section-kicker">{isCatalogPage ? 'SHOP BY CATEGORY' : 'POPULAR PICKS'}</p>
-            <h2>{isWishlistPage ? 'Your wishlist' : isCatalogPage ? (categoryLabels[activeCategory] || activeCategory) : 'Popular products'}</h2>
-            <p className="section-description">{isWishlistPage ? 'Products you saved for later.' : isCatalogPage ? `Browse ${categoryLabels[activeCategory] || activeCategory.toLowerCase()} available from MediNest.` : 'Everyday products for you and your family.'}</p>
+            <h2>{isWishlistPage ? 'Your wishlist' : activeHealthIssue ? `Products for ${activeHealthIssue.toLowerCase()}` : isCatalogPage ? (categoryLabels[activeCategory] || activeCategory) : 'Popular products'}</h2>
+            <p className="section-description">{isWishlistPage ? 'Products you saved for later.' : activeHealthIssue ? `Catalog items matching ${activeHealthIssue.toLowerCase()}. Product information is not medical advice.` : isCatalogPage ? `Browse ${categoryLabels[activeCategory] || activeCategory.toLowerCase()} available from MediNest.` : 'Everyday products for you and your family.'}</p>
           </div>
           {isWishlistPage
             ? <a className="text-link" href="/">Continue shopping <span aria-hidden="true">→</span></a>
@@ -1178,6 +1570,8 @@ function App() {
           <p className="empty-message">
             {isWishlistPage && wishlistIds.length === 0
               ? 'Your wishlist is empty. Tap the heart on a product to save it here.'
+              : activeHealthIssue
+              ? `No products matching ${activeHealthIssue.toLowerCase()} are currently available in the catalog.`
               : search.trim()
               ? `No products match “${search.trim()}”.`
               : `No ${isCatalogPage ? categoryLabels[activeCategory] || activeCategory.toLowerCase() : 'products'} are available yet.`}
@@ -1188,12 +1582,36 @@ function App() {
       {apiError && <p className="prescription-note" role="alert">{apiError}</p>}
 
       <section className="conditions-section" id="conditions">
-        <div className="section-heading"><h2>Shop by health issue</h2><a href="#medicines">View all <span aria-hidden="true">›</span></a></div>
-        <div className="condition-grid">
-          {conditions.map((condition) => (
-            <button className="condition-card" key={condition.name} type="button" onClick={() => { setSearch(condition.name.toLowerCase().includes('pain') ? 'pain' : ''); document.getElementById('medicines')?.scrollIntoView({ behavior: 'smooth' }) }}>
-              <span className={`condition-icon ${condition.color}`} aria-hidden="true">{condition.icon}</span>
-              <span>{condition.name}</span><span className="condition-arrow" aria-hidden="true">›</span>
+        <div className="condition-section-heading">
+          <div>
+            <p className="section-kicker">FIND EVERYDAY ESSENTIALS</p>
+            <h2>Shop by health issue</h2>
+          </div>
+          <div className="condition-carousel-controls">
+            <a href="#medicines">View products <span aria-hidden="true">→</span></a>
+            <button type="button" onClick={() => scrollHealthIssues(-1)} aria-label="Scroll health issues left">←</button>
+            <button type="button" onClick={() => scrollHealthIssues(1)} aria-label="Scroll health issues right">→</button>
+          </div>
+        </div>
+        <div className="condition-grid" ref={healthIssueScrollerRef} aria-label="Health issue categories">
+          {conditions.map((condition, index) => (
+            <button
+              className={`condition-card ${condition.color}`}
+              key={condition.name}
+              style={{ '--condition-index': index }}
+              type="button"
+              onClick={() => {
+                setActiveHealthIssue(condition.name)
+                setSearch(condition.searchTerms[0])
+                document.getElementById('medicines')?.scrollIntoView({ behavior: 'smooth' })
+              }}
+            >
+              <span className="condition-card-copy">
+                <small>SHOP BY HEALTH ISSUE</small>
+                <strong>{condition.name}</strong>
+              </span>
+              <img className="condition-card-image" src={condition.image} alt="" loading="lazy" />
+              <span className="condition-card-arrow" aria-hidden="true">→</span>
             </button>
           ))}
         </div>
@@ -1236,60 +1654,27 @@ function App() {
         </div>
       </section>
 
-      <section className="prescription-panel" id="upload-prescription" aria-labelledby="prescription-title">
-        <div className="section-heading">
-          <div><p className="section-kicker">SECURE MEDICINE REVIEW</p><h2 id="prescription-title">Submit a prescription</h2></div>
-        </div>
-        {token ? <>
-          <p>Choose the prescription-required product and upload a PDF, JPEG, or PNG (up to 5 MB). The file is stored privately and reviewed by an administrator.</p>
-          <form className="prescription-upload-form" onSubmit={uploadPrescription}>
-            <label>Product
-              <select name="productId" value={prescriptionProductId} onChange={(event) => setPrescriptionProductId(event.target.value)} required>
-                <option value="">Select a product</option>
-                {prescriptionProducts.map((product) => <option key={product._id} value={product._id}>{product.name}</option>)}
-              </select>
-            </label>
-            <label>Prescription file
-              <input name="prescriptionFile" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required />
-            </label>
-            <button className="checkout-button" type="submit" disabled={isSubmitting || prescriptionProducts.length === 0}>
-              {isSubmitting ? 'Uploading…' : 'Upload for review'}
-            </button>
-          </form>
-          {prescriptionFeedback && <p className="prescription-note" role="status">{prescriptionFeedback}</p>}
-          <div className="prescription-list">
-            <h3>Your submissions</h3>
-            {prescriptions.length === 0 && <p>No prescriptions submitted yet.</p>}
-            {prescriptions.map((prescription) => (
-              <article className="prescription-row" key={prescription._id}>
-                <div>
-                  <strong>{prescription.productId?.name || 'Product'}</strong>
-                  <small>{prescription.status} · {new Date(prescription.createdAt).toLocaleDateString()}</small>
-                  {prescription.reviewNote && <small>Review note: {prescription.reviewNote}</small>}
-                </div>
-                <button type="button" onClick={() => downloadPrescription(prescription._id)}>Download</button>
-              </article>
+      {isMedicinesCategory && brands.length > 0 && (
+        <section className="brand-section" id="brands" aria-labelledby="brand-title">
+          <div className="section-heading"><h2 id="brand-title">Shop by brand</h2><a className="text-link" href="/?category=Medicines">Shop all medicines <span aria-hidden="true">›</span></a></div>
+          <div className="brand-grid">
+            {brands.map((brand, index) => (
+              <a className="brand-card" key={brand} href={`/?brand=${encodeURIComponent(brand)}`}>
+                <BrandLogo brand={brand} index={index} />
+                <strong>{brand}</strong>
+              </a>
             ))}
           </div>
-        </> : <div className="prescription-signin">
-          <p>Sign in to securely submit a prescription and check its review status.</p>
-          <button className="checkout-button" type="button" onClick={() => { setAuthMode('login'); setAuthFeedback(''); setIsAuthOpen(true) }}>Sign in to continue</button>
-        </div>}
-      </section>
-
-      <section className="brand-section" id="brands" aria-labelledby="brand-title">
-        <div className="section-heading"><h2 id="brand-title">Shop by brand</h2><a className="text-link" href="/">Shop all products <span aria-hidden="true">›</span></a></div>
-        <div className="brand-grid">
-          {brands.map((brand, index) => <a className="brand-card" key={brand} href={`/?brand=${encodeURIComponent(brand)}`}><span className={`brand-logo brand-logo-${index + 1}`}>{brand.split(' ').map((word) => word[0]).join('').replace('&', '')}</span><strong>{brand}</strong></a>)}
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="orders-section" id="orders" aria-labelledby="orders-title">
         <div className="section-heading"><div><p className="section-kicker">YOUR ACTIVITY</p><h2 id="orders-title">{userRole === 'admin' ? 'All orders' : 'Your recent orders'}</h2></div><span className="order-count">{orders.length} {orders.length === 1 ? 'order' : 'orders'}</span></div>
         {!token ? <div className="orders-empty"><span aria-hidden="true"><CartIcon /></span><p>Sign in to view your orders.</p><button type="button" onClick={() => setIsAuthOpen(true)}>Sign in</button></div> : orders.length === 0 ? <div className="orders-empty"><span aria-hidden="true"><CartIcon /></span><p>Your orders will show here after you place an order.</p><a href="/">Shop products</a></div> : <div className="orders-list">{orders.map((order) => <article className="order-card" key={order._id}><div className="order-card-heading"><div><small>ORDER {String(order._id).slice(-8).toUpperCase()}</small><strong>{order.status}</strong></div><span className="order-status">{paymentMethodLabels[order.paymentMethod] || order.paymentMethod} · {order.paymentStatus}</span></div><p>{order.items.map((item) => `${item.name} × ${item.quantity}`).join(', ')}</p><p>{order.deliveryAddress?.streetAddress}, {order.deliveryAddress?.city}, {order.deliveryAddress?.state} {order.deliveryAddress?.postalCode}</p><div className="order-card-footer"><span>{new Date(order.createdAt).toLocaleDateString('en-IN')} · {formatINR(order.totalAmount)}</span><button type="button" onClick={() => reorder(order.items)}>Buy again</button>{order.status !== 'Delivered' && order.status !== 'Cancelled' && <button type="button" onClick={() => cancelOrder(order._id)}>Cancel</button>}{userRole === 'admin' && <select aria-label={`Update status for order ${order._id}`} value={order.status} onChange={(event) => updateOrderStatus(order._id, event.target.value)}><option>Order Placed</option><option>Processing</option><option>Shipped</option><option>Delivered</option></select>}</div></article>)}</div>}
       </section>
 
-      {token && <section className="profile-section" id="profile" aria-labelledby="profile-title">
+      {isAccountPage && <section className="profile-section" id="profile" aria-labelledby="profile-title">
+        {token ? <>
         <div className="section-heading"><div><p className="section-kicker">ACCOUNT</p><h2 id="profile-title">Your profile and addresses</h2></div></div>
         <form className="profile-form" onSubmit={saveProfile}>
           <label>Name<input value={profileName} onChange={(event) => setProfileName(event.target.value)} required /></label>
@@ -1334,6 +1719,12 @@ function App() {
           </details>)}
           {addresses.length === 0 && <p className="address-empty">No saved delivery addresses yet. Add one above when you are ready.</p>}
         </div>
+        </> : <div className="account-signin">
+          <p className="section-kicker">ACCOUNT</p>
+          <h2 id="profile-title">Sign in to manage your account</h2>
+          <p>Access your profile and saved delivery addresses after signing in.</p>
+          <button className="checkout-button" type="button" onClick={() => { setAuthMode('login'); setAuthFeedback(''); setIsAuthOpen(true) }}>Sign in</button>
+        </div>}
       </section>}
 
       {userRole === 'admin' && (
@@ -1387,6 +1778,57 @@ function App() {
         </section>
       )}
 
+      <section className="home-health-articles" aria-labelledby="home-health-articles-title">
+        <div className="home-content-heading">
+          <div>
+            <p className="section-kicker">MEDINEST HEALTH INSIGHTS</p>
+            <h2 id="home-health-articles-title">Health articles & guides</h2>
+          </div>
+          <a href="/?category=Wellness">Explore health products <span aria-hidden="true">→</span></a>
+        </div>
+        <div className="home-health-article-grid">
+          {homeHealthArticles.map((article) => (
+            <article className="home-health-article" key={article.title}>
+              <a className="home-health-article-image" href={article.link} aria-label={article.linkText}>
+                <img src={article.image} alt="" loading="lazy" />
+              </a>
+              <div className="home-health-article-copy">
+                <p>{article.category}</p>
+                <h3>{article.title}</h3>
+                <span>{article.summary}</span>
+                <a href={article.link}>{article.linkText} <span aria-hidden="true">→</span></a>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p className="home-editorial-note">General information only. Follow product instructions and your healthcare professional’s advice.</p>
+      </section>
+
+      <section className="home-benefits" id="why-choose-us" aria-labelledby="home-benefits-title">
+        <div className="home-benefits-heading">
+          <p className="section-kicker">EVERYDAY CARE, MADE EASIER</p>
+          <h2 id="home-benefits-title">Why choose MediNest?</h2>
+        </div>
+        <div className="home-benefit-grid">
+          <article className="home-benefit">
+            <span className="home-benefit-icon" aria-hidden="true">✓</span>
+            <div><h3>Clear product details</h3><p>Review product descriptions, prices, and availability before adding items to your cart.</p></div>
+          </article>
+          <article className="home-benefit">
+            <span className="home-benefit-icon" aria-hidden="true">↗</span>
+            <div><h3>Simple ordering</h3><p>Keep selected products in your cart and provide delivery details at checkout.</p></div>
+          </article>
+          <article className="home-benefit">
+            <span className="home-benefit-icon" aria-hidden="true">Rx</span>
+            <div><h3>Prescription review</h3><p>Submit a prescription for eligible products and follow its review status in your account.</p></div>
+          </article>
+          <article className="home-benefit">
+            <span className="home-benefit-icon" aria-hidden="true">♡</span>
+            <div><h3>Save for later</h3><p>Use your wishlist to keep track of products you may want to revisit.</p></div>
+          </article>
+        </div>
+      </section>
+
       <section className="recommendation-signin" aria-labelledby="recommendation-title">
         <h2 id="recommendation-title">{token ? 'Welcome back to MediNest' : 'See your MediNest recommendations'}</h2>
         <p>{token ? 'Browse health essentials picked for your everyday care.' : 'Sign in to see recommendations and keep your shopping in one place.'}</p>
@@ -1398,19 +1840,101 @@ function App() {
       <a className="back-to-top" href="/">Back to top</a>
       <footer className="store-footer">
         <div className="footer-link-columns">
-          <section><h2>Get to know MediNest</h2><a href="#conditions">Health and wellness</a><a href="#services">Our services</a><a href="#top">About MediNest</a></section>
-          <section><h2>Shop with us</h2><a href="/?category=Medicines">Medicines</a><a href="/?category=Vitamins">Vitamins & nutrition</a><a href="/?category=Personal%20care">Personal care</a></section>
-          <section><h2>Your account</h2><a href="/?view=cart">Your cart</a><a href="/?view=orders">Your orders</a><a href="#profile">Your profile</a><a href="#upload-prescription">Prescriptions</a></section>
-          <section><h2>Let us help you</h2><a href="/?view=orders">Order support</a><a href="#top">Delivery information</a><a href="#top">Help and FAQs</a></section>
+          <section>
+            <h2>MediNest</h2>
+            <a href="#why-choose-us">Why choose us</a>
+            <a href="#services">Our services</a>
+            <a href="#conditions">Health and wellness</a>
+            <a href="#home-health-articles-title">Health guides</a>
+          </section>
+          <section>
+            <h2>Featured categories</h2>
+            {homeShopCategories.map(({ category }) => (
+              <a href={getCategoryHref(category)} key={category}>{categoryLabels[category] || category}</a>
+            ))}
+          </section>
+          <section>
+            <h2>Need help?</h2>
+            <a href="/?category=Medicines">Browse medicines</a>
+            <a href="/?view=prescriptions">Prescription upload</a>
+            <a href="/?view=orders">Your orders</a>
+            <a href="/?view=cart">Your cart</a>
+          </section>
+          <section>
+            <h2>Your MediNest account</h2>
+            <a href="/?view=account">Profile and addresses</a>
+            <a href="/?view=wishlist">Your wishlist</a>
+            <a href="/?view=orders">Order history</a>
+            <a href="/?view=prescriptions">Prescription submissions</a>
+            <p className="footer-social-note">MediNest social channels will be listed here when available.</p>
+          </section>
+        </div>
+        <div className="footer-payment-row">
+          <div>
+            <h2>Payment at delivery</h2>
+            <div className="footer-payment-options"><span>Cash</span><span>UPI</span><span>Card</span></div>
+          </div>
+          <small>Payment is collected by the delivery person. Online payment is not available.</small>
         </div>
         <div className="footer-brand-row">
           <a className="brand footer-brand" href="/"><BrandMark /><span>Medi<span>Nest</span></span></a>
           <p>Everyday health, made a little easier.</p>
           <small>Follow the directions on the pack and your doctor's advice.</small>
+          <small>© {new Date().getFullYear()} MediNest</small>
         </div>
       </footer>
 
       {cartCount > 0 && !isCartPage && <div className="sticky-cart"><span className="sticky-cart-icon" aria-hidden="true"><CartIcon /></span><div className="sticky-cart-summary"><strong>{formatINR(cartTotal)}</strong><small>{cartCount} {cartCount === 1 ? 'item' : 'items'} added</small></div><a href="/?view=cart">View Cart</a></div>}
+
+      {isLocationPickerOpen && (
+        <div className="location-picker-backdrop" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setIsLocationPickerOpen(false)
+        }}>
+          <section className="location-picker" role="dialog" aria-modal="true" aria-labelledby="location-picker-title" aria-describedby="location-picker-description">
+            <div className="location-picker-heading">
+              <h2 id="location-picker-title">Choose your location</h2>
+              <button type="button" onClick={() => setIsLocationPickerOpen(false)} aria-label="Close location picker">×</button>
+            </div>
+            <div className="location-picker-content">
+              <p id="location-picker-description">Enter your PIN code to personalize your delivery location.</p>
+              <button className="location-signin-button" type="button" onClick={() => {
+                setIsLocationPickerOpen(false)
+                if (!token) {
+                  setAuthMode('login')
+                  setAuthFeedback('')
+                  setIsAuthOpen(true)
+                } else {
+                  window.location.assign('/?view=account')
+                }
+              }}>
+                {token ? 'View your account addresses' : 'Sign in to see your addresses'}
+              </button>
+              <div className="location-picker-divider"><span>or enter an Indian pincode</span></div>
+              <form className="location-pincode-form" onSubmit={applyDeliveryPincode}>
+                <label className="sr-only" htmlFor="delivery-pincode">Indian PIN code</label>
+                <input
+                  id="delivery-pincode"
+                  ref={deliveryPincodeInputRef}
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="postal-code"
+                  pattern="[1-9][0-9]{5}"
+                  maxLength="6"
+                  placeholder="Enter 6-digit pincode"
+                  value={deliveryPincodeDraft}
+                  onChange={(event) => {
+                    setDeliveryPincodeDraft(event.target.value.replace(/\D/g, '').slice(0, 6))
+                    setLocationPickerError('')
+                  }}
+                  required
+                />
+                <button type="submit">Apply</button>
+              </form>
+              {locationPickerError && <p className="location-picker-error" role="alert">{locationPickerError}</p>}
+            </div>
+          </section>
+        </div>
+      )}
 
       {isCartPage && (
         <section className="cart-page-panel" aria-label="Shopping cart">
