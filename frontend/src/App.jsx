@@ -53,6 +53,7 @@ const categoryProductImages = {
   'hair care': [hairCareImage, skincareProductImage, selfCareImage],
 }
 const OTP_RESEND_DELAY_SECONDS = 60
+const HERO_SLIDE_INTERVAL_MS = 2000
 
 const homeCategories = [
   {
@@ -261,6 +262,7 @@ function App() {
   const [authFeedback, setAuthFeedback] = useState('')
   const [resetEmail, setResetEmail] = useState('')
   const [resetOtp, setResetOtp] = useState('')
+  const authResetBackdropRef = useRef(null)
   const [otpResendCountdown, setOtpResendCountdown] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [reminderMedicineId, setReminderMedicineId] = useState('')
@@ -289,6 +291,20 @@ function App() {
     }, 1000)
     return () => window.clearTimeout(timer)
   }, [otpResendCountdown])
+
+  useEffect(() => {
+    if (isAuthOpen && authMode === 'reset') {
+      authResetBackdropRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+    }
+  }, [authMode, isAuthOpen])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveHeroSlide((current) => (current + 1) % homeHeroSlides.length)
+    }, HERO_SLIDE_INTERVAL_MS)
+
+    return () => window.clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     let active = true
@@ -837,7 +853,7 @@ function App() {
             email,
             otp: formData.get('otp') || resetOtp,
             newPassword: formData.get('newPassword'),
-            confirmPassword: formData.get('confirmPassword'),
+            confirmPassword: formData.get('newPassword'),
           },
         })
         setAuthMode('login')
@@ -1425,21 +1441,9 @@ function App() {
       )}
 
       {isAuthOpen && (authMode === 'reset' ? (
-        <div className="auth-backdrop auth-reset-backdrop">
+        <div className="auth-backdrop auth-reset-backdrop" ref={authResetBackdropRef}>
           <section className="auth-reset-dialog" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-            <div className="auth-reset-story" style={{ backgroundImage: `linear-gradient(180deg, rgb(15 48 43 / 18%), rgb(15 48 43 / 78%)), url(${pharmacyLabImage})` }}>
-              <a className="auth-reset-brand" href="/" aria-label="MediNest home">
-                <BrandMark />
-                <span>MediNest</span>
-              </a>
-              <div className="auth-reset-story-copy">
-                <p className="section-kicker">CARE FOR YOUR ACCOUNT</p>
-                <h2>Everyday health, with peace of mind.</h2>
-                <p>Your account keeps your health essentials and orders close at hand.</p>
-              </div>
-            </div>
             <div className="auth-reset-panel">
-              <button className="auth-close" type="button" onClick={() => setIsAuthOpen(false)} aria-label="Close password reset">×</button>
               <div className="auth-reset-content">
                 <p className="section-kicker">BACK TO YOUR MEDINEST ACCOUNT</p>
                 <h1 id="auth-title">Reset your password</h1>
@@ -1449,7 +1453,6 @@ function App() {
                 <form className="auth-form auth-reset-form" onSubmit={handleAuthSubmit}>
                   <label>Verification code<input name="otp" type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength="6" autoComplete="one-time-code" value={resetOtp} onChange={(event) => setResetOtp(event.target.value)} required /></label>
                   <label>New password<input name="newPassword" type="password" autoComplete="new-password" minLength={8} placeholder="At least 8 characters" required /></label>
-                  <label>Confirm new password<input name="confirmPassword" type="password" autoComplete="new-password" minLength={8} placeholder="Enter your new password again" required /></label>
                   {authFeedback && <p className="auth-reset-feedback" role="status">{authFeedback}</p>}
                   <button className="auth-submit" type="submit" disabled={isSubmitting}>{isSubmitting ? 'Please wait…' : 'Reset password'}</button>
                 </form>

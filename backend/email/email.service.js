@@ -17,7 +17,7 @@ class EmailService {
         return randomInt(100000, 1000000).toString();
     }
 
-    async sendMail({ to, subject, text }) {
+    async sendMail({ to, subject, text, html }) {
         const emailUser = process.env.SMTP_USER || process.env.EMAIL_USER;
         const emailPass = (process.env.SMTP_PASS || process.env.EMAIL_PASS)?.replace(/\s/g, '');
 
@@ -47,7 +47,8 @@ class EmailService {
             from: process.env.MAIL_FROM || emailUser,
             to,
             subject,
-            text
+            text,
+            html
         });
     }
 
@@ -100,7 +101,8 @@ class EmailService {
             await this.sendMail({
                 to: normalizedEmail,
                 subject: template.subject,
-                text: template.text
+                text: template.text,
+                html: template.html
             });
             console.info('Password reset email sent successfully.');
         } catch (error) {
