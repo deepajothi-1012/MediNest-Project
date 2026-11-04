@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import { apiDownload, apiRequest } from './api'
 import skincareProductImage from './assets/products/skincare.jpg'
@@ -19,16 +19,6 @@ import herbalProductsImage from './assets/products/herbal-products.jpg'
 import babyCareImage from './assets/products/baby-care.jpg'
 import selfCareImage from './assets/products/self-care.jpg'
 
-const pharmacyImages = [
-  pharmacyPillsImage,
-  pharmacyLabImage,
-  pharmacyCapsuleImage,
-  pharmacyBottleImage,
-  pharmacyVialsImage,
-  pharmacyMoleculeImage,
-  pharmacyAssortedImage,
-  pharmacyOrangePillImage,
-]
 const medicineProductImages = [
   medicineTabletsImage,
   pharmacyPillsImage,
@@ -45,121 +35,62 @@ const wellnessProductImages = [
 ]
 const OTP_RESEND_DELAY_SECONDS = 60
 
-const marketplacePromos = [
+const homeCategories = [
   {
-    eyebrow: 'EVERYDAY WELLNESS',
-    title: 'Care essentials for every day',
-    offer: 'Explore trusted medicines',
+    eyebrow: 'THE MEDICINE CABINET',
+    title: 'Medicines',
+    detail: 'Trusted essentials for your everyday needs.',
     category: 'Medicines',
-    image: pharmacyImages[0],
-    tone: 'coral',
+    image: medicineTabletsImage,
   },
   {
-    eyebrow: 'VITAMINS & NUTRITION',
-    title: 'Make wellness part of your routine',
-    offer: 'Shop vitamins and supplements',
+    eyebrow: 'NOURISH YOUR ROUTINE',
+    title: 'Vitamins & nutrition',
+    detail: 'A little support for the habits you keep.',
     category: 'Vitamins',
-    image: pharmacyImages[1],
-    tone: 'gold',
+    image: pharmacyOrangePillImage,
   },
   {
-    eyebrow: 'PERSONAL CARE',
-    title: 'A little care goes a long way',
-    offer: 'Explore personal care',
+    eyebrow: 'TIME FOR YOURSELF',
+    title: 'Personal care',
+    detail: 'Considered care for skin, hair and body.',
     category: 'Personal care',
-    image: pharmacyImages[2],
-    tone: 'plum',
+    image: selfCareImage,
   },
   {
-    eyebrow: 'HEALTH AT HOME',
-    title: 'Feel ready for the little things',
-    offer: 'Browse health devices',
+    eyebrow: 'FEEL BETTER PREPARED',
+    title: 'Health at home',
+    detail: 'Useful tools for everyday peace of mind.',
     category: 'Devices',
-    image: pharmacyImages[3],
-    tone: 'forest',
-  },
-  {
-    eyebrow: 'FAMILY WELLNESS',
-    title: 'Thoughtful picks for your family',
-    offer: 'Shop family essentials',
-    category: 'Baby products',
-    image: pharmacyImages[4],
-    tone: 'blue',
+    image: medicalDeviceImage,
   },
 ]
 
-const marketplaceDealGroups = [
+const homeHeroSlides = [
   {
-    title: 'Everyday pharmacy essentials',
-    items: [
-      { label: 'Medicines', image: pharmacyImages[0], category: 'Medicines' },
-      { label: 'Vitamins & supplements', image: pharmacyImages[1], category: 'Vitamins' },
-      { label: 'Health devices', image: pharmacyImages[2], category: 'Devices' },
-      { label: 'Browse all medicines', image: pharmacyImages[3], category: 'Medicines' },
-    ],
+    image: vitaminsCategoryImage,
+    alt: 'Citrus fruits and vitamins for everyday wellness',
+    caption: 'Small steps, brighter days',
   },
   {
-    title: 'Personal care picks',
-    items: [
-      { label: 'Skin care', image: pharmacyImages[4], category: 'Personal care' },
-      { label: 'Hair care', image: pharmacyImages[5], category: 'Hair care' },
-      { label: 'Daily wellness', image: pharmacyImages[6], category: 'Wellness' },
-      { label: 'Oral care', image: pharmacyImages[7], category: 'Oral care' },
-    ],
+    image: pharmacyPillsImage,
+    alt: 'A selection of medicines and tablets',
+    caption: 'Everyday medicine essentials',
   },
   {
-    title: 'Wellness for the whole family',
-    items: [
-      { label: 'Vitamins', image: pharmacyImages[1], category: 'Vitamins' },
-      { label: 'Baby products', image: pharmacyImages[2], category: 'Baby products' },
-      { label: 'Ayurveda', image: pharmacyImages[3], category: 'Ayurveda' },
-      { label: 'Health products', image: pharmacyImages[4], category: 'Wellness' },
-    ],
+    image: herbalProductsImage,
+    alt: 'Herbal wellness products and natural ingredients',
+    caption: 'A little room for natural care',
   },
   {
-    title: 'Explore health at home',
-    items: [
-      { label: 'Health tools', image: pharmacyImages[5], category: 'Devices' },
-      { label: 'Everyday care', image: pharmacyImages[6], category: 'Personal care' },
-      { label: 'Family essentials', image: pharmacyImages[7], category: 'Baby products' },
-      { label: 'Shop all products', image: pharmacyImages[0], category: 'All products' },
-    ],
+    image: medicalDeviceImage,
+    alt: 'Health tools for caring for yourself at home',
+    caption: 'Feel prepared at home',
   },
   {
-    title: 'Daily care, made simple',
-    items: [
-      { label: 'Skin care', image: pharmacyImages[2], category: 'Personal care' },
-      { label: 'Nutrition', image: pharmacyImages[3], category: 'Vitamins' },
-      { label: 'Medicine cabinet', image: pharmacyImages[4], category: 'Medicines' },
-      { label: 'Oral health', image: pharmacyImages[5], category: 'Oral care' },
-    ],
-  },
-  {
-    title: 'Feel-good wellness finds',
-    items: [
-      { label: 'Herbal care', image: pharmacyImages[6], category: 'Ayurveda' },
-      { label: 'Daily vitamins', image: pharmacyImages[7], category: 'Vitamins' },
-      { label: 'Personal care', image: pharmacyImages[0], category: 'Personal care' },
-      { label: 'Health essentials', image: pharmacyImages[1], category: 'Medicines' },
-    ],
-  },
-  {
-    title: 'Health essentials for home',
-    items: [
-      { label: 'Home health tools', image: pharmacyImages[3], category: 'Devices' },
-      { label: 'Wellness', image: pharmacyImages[4], category: 'Wellness' },
-      { label: 'Skin & body', image: pharmacyImages[5], category: 'Personal care' },
-      { label: 'Shop vitamins', image: pharmacyImages[6], category: 'Vitamins' },
-    ],
-  },
-  {
-    title: 'Care for every age',
-    items: [
-      { label: 'Family health', image: pharmacyImages[7], category: 'Medicines' },
-      { label: 'Baby care', image: pharmacyImages[0], category: 'Baby products' },
-      { label: 'Nutrition', image: pharmacyImages[1], category: 'Vitamins' },
-      { label: 'Everyday essentials', image: pharmacyImages[2], category: 'Personal care' },
-    ],
+    image: selfCareImage,
+    alt: 'Gentle personal care products for a daily routine',
+    caption: 'Make time for your own care',
   },
 ]
 
@@ -246,7 +177,19 @@ const conditions = [
 ]
 
 function BrandMark() {
-  return <span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 8v10m-5-5h10" stroke="white" strokeWidth="3.2" strokeLinecap="round" /><path d="M10 23.5c2.5 5.7 6.5 8.5 12 8.5s9.5-2.8 12-8.5M14 30c2.2 2.6 4.9 4 8 4s5.8-1.4 8-4" stroke="#C8E9DF" strokeWidth="2.2" strokeLinecap="round" /></svg></span>
+  return (
+    <span className="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g className="brand-sprout">
+          <path d="M22 26v-9" stroke="#F5F7F1" strokeWidth="2.1" strokeLinecap="round" />
+          <path d="M22 21c-5.8 0-8.2-2.5-8.2-6.2 5.3 0 8.2 2 8.2 6.2Z" fill="#A8D9C1" />
+          <path d="M22 18.5c0-4.4 2.5-7 7.7-7-.1 4.4-2.6 7-7.7 7Z" fill="#D5E9A9" />
+        </g>
+        <path d="M11 27c2.2 4.4 5.9 6.7 11 6.7S30.8 31.4 33 27" stroke="#F5F7F1" strokeWidth="2" strokeLinecap="round" />
+        <path d="M14.5 31.5c2 2.4 4.5 3.6 7.5 3.6s5.5-1.2 7.5-3.6" stroke="#A8D9C1" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    </span>
+  )
 }
 
 function CartIcon() {
@@ -267,6 +210,8 @@ function ThermometerIcon() {
 
 function App() {
   const [search, setSearch] = useState('')
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0)
+  const heroTouchStart = useRef(null)
   const activeCategory = initialCategory
   const [activeBrand, setActiveBrand] = useState(initialBrand)
   const [medicines, setMedicines] = useState([])
@@ -575,6 +520,31 @@ function App() {
       setProfileName(result.user.name)
       setUserName(result.user.name.split(' ')[0])
       setProfileFeedback('Profile updated.')
+    } catch (error) {
+      setProfileFeedback(error.message)
+    }
+  }
+
+  async function saveDeliveryAddress(event) {
+    event.preventDefault()
+    const form = event.currentTarget
+    const formData = new FormData(form)
+    const address = Object.fromEntries(
+      ['label', 'fullName', 'phone', 'streetAddress', 'locality', 'city', 'state', 'postalCode', 'country']
+        .map((field) => [field, formData.get(field).toString().trim()])
+    )
+    setProfileFeedback('')
+    try {
+      const result = await apiRequest('/users/me/addresses', {
+        method: 'POST',
+        token,
+        body: address,
+      })
+      const savedAddresses = result.addresses || []
+      setAddresses(savedAddresses)
+      setSelectedAddressId(savedAddresses.find((item) => item.isDefault)?._id || '')
+      setProfileFeedback('Delivery address saved.')
+      form.reset()
     } catch (error) {
       setProfileFeedback(error.message)
     }
@@ -991,6 +961,12 @@ function App() {
     setIsCheckoutOpen(true)
   }
 
+  function showHeroSlide(step) {
+    setActiveHeroSlide((current) => (
+      (current + step + homeHeroSlides.length) % homeHeroSlides.length
+    ))
+  }
+
   return (
     <main id="top" className={[
       isCatalogPage && 'catalog-page',
@@ -1025,6 +1001,10 @@ function App() {
               <small>{userName ? `Hello, ${userName}` : 'Hello, sign in'}</small>
               <strong>{userName ? 'Sign out' : 'Account'}</strong>
             </button>
+            <a className="market-wishlist" href="/?view=wishlist" aria-label={`Wishlist${wishlistIds.length ? `, ${wishlistIds.length} saved items` : ''}`}>
+              <small>Saved</small>
+              <strong>Wishlist{wishlistIds.length > 0 ? ` (${wishlistIds.length})` : ''}</strong>
+            </a>
             <a className="market-orders" href="/?view=orders"><small>Returns &</small><strong>Orders</strong></a>
             <a className="icon-cart" href="/?view=cart" aria-label={`View cart, ${cartCount} ${cartCount === 1 ? 'item' : 'items'}`}>
               <span aria-hidden="true"><CartIcon /></span><strong>Cart</strong>{cartCount > 0 && <b>{cartCount}</b>}
@@ -1036,7 +1016,6 @@ function App() {
           <a className={initialCategory === 'Medicines' ? 'selected' : ''} href="/?category=Medicines">Medicines</a>
           <a className={initialCategory === 'Vitamins' ? 'selected' : ''} href="/?category=Vitamins">Vitamins & nutrition</a>
           <a className={initialCategory === 'Personal care' ? 'selected' : ''} href="/?category=Personal%20care">Personal care</a>
-          <a className={isWishlistPage ? 'selected' : ''} href="/?view=wishlist">Wishlist{wishlistIds.length > 0 ? ` (${wishlistIds.length})` : ''}</a>
           <a className={isCartPage ? 'selected' : ''} href="/?view=cart">Cart{cartCount > 0 ? ` (${cartCount})` : ''}</a>
           <a className={isBrandsPage ? 'selected' : ''} href="/?view=brands">Brands</a>
           <a className={isOrdersPage ? 'selected' : ''} href="/?view=orders">Your orders</a>
@@ -1047,23 +1026,52 @@ function App() {
         </nav>
       </header>
 
-      <section className="marketplace-promos" aria-label="Featured pharmacy offers">
-        <div className="marketplace-promos-heading">
-          <div><p className="section-kicker">A HEALTHIER EVERYDAY STARTS HERE</p><h1>Find care for every day.</h1></div>
-          <a href="/">Shop all products <span aria-hidden="true">→</span></a>
+      <section className="home-story" aria-label="Welcome to MediNest">
+        <div className="home-story-copy">
+          <p className="story-eyebrow">A GOOD PLACE TO START</p>
+          <h1>Good health is made of little things.</h1>
+          <p className="story-intro">The everyday essentials, the things you keep meaning to pick up, and a little help finding what you need.</p>
+          <a className="story-link" href={getCategoryHref('Medicines')}>Explore the essentials <span aria-hidden="true">→</span></a>
+          <p className="story-footnote"><span aria-hidden="true">✳</span> Thoughtfully chosen for everyday care</p>
         </div>
-        <div className="promo-strip">
-          {marketplacePromos.map((promo) => (
-            <article className={`promo-card promo-${promo.tone}`} key={promo.eyebrow}>
-              <img src={promo.image} alt="" />
-              <div className="promo-copy">
-                <small>{promo.eyebrow}</small>
-                <h2>{promo.title}</h2>
-                <a href={getCategoryHref(promo.category)}>{promo.offer}<span aria-hidden="true"> →</span></a>
-              </div>
-              <span className="promo-discount">Care you can count on</span>
-            </article>
-          ))}
+        <div
+          className="home-story-image"
+          onTouchStart={(event) => {
+            heroTouchStart.current = event.changedTouches[0].clientX
+          }}
+          onTouchEnd={(event) => {
+            if (heroTouchStart.current === null) return
+            const swipeDistance = event.changedTouches[0].clientX - heroTouchStart.current
+            if (Math.abs(swipeDistance) > 40) showHeroSlide(swipeDistance < 0 ? 1 : -1)
+            heroTouchStart.current = null
+          }}
+          role="group"
+          aria-label="Featured MediNest images"
+        >
+          <img
+            key={homeHeroSlides[activeHeroSlide].image}
+            src={homeHeroSlides[activeHeroSlide].image}
+            alt={homeHeroSlides[activeHeroSlide].alt}
+          />
+          <span className="hero-image-caption" key={homeHeroSlides[activeHeroSlide].caption} aria-live="polite">{homeHeroSlides[activeHeroSlide].caption}</span>
+          <button className="hero-slide-arrow hero-slide-previous" type="button" onClick={() => showHeroSlide(-1)} aria-label="Show previous image">
+            <span aria-hidden="true">←</span>
+          </button>
+          <button className="hero-slide-arrow hero-slide-next" type="button" onClick={() => showHeroSlide(1)} aria-label="Show next image">
+            <span aria-hidden="true">→</span>
+          </button>
+          <div className="hero-slide-dots" aria-label="Choose a featured image">
+            {homeHeroSlides.map((slide, index) => (
+              <button
+                aria-label={`Show image ${index + 1}: ${slide.caption}`}
+                aria-current={index === activeHeroSlide ? 'true' : undefined}
+                className={index === activeHeroSlide ? 'active' : ''}
+                key={slide.caption}
+                onClick={() => setActiveHeroSlide(index)}
+                type="button"
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -1086,26 +1094,25 @@ function App() {
         </a>
       </section>
 
-      <section className="deal-grid-section" aria-label="Shop pharmacy categories">
-        <div className="deal-grid">
-          {marketplaceDealGroups.map((group) => (
-            <article className="deal-group" key={group.title}>
-              <a className="deal-group-heading" href="/">
-                <h2>{group.title}</h2><span aria-hidden="true">›</span>
-              </a>
-              <div className="deal-group-items">
-                {group.items.map((item) => (
-                  <a
-                    className="deal-item"
-                    href={getCategoryHref(item.category)}
-                    key={`${group.title}-${item.label}`}
-                  >
-                    <img src={item.image} alt="" loading="lazy" />
-                    <span>{item.label}</span>
-                  </a>
-                ))}
-              </div>
-            </article>
+      <section className="home-categories" aria-label="Browse health categories">
+        <div className="home-categories-heading">
+          <div>
+            <p className="story-eyebrow">A FEW PLACES TO BEGIN</p>
+            <h2>What can we help with?</h2>
+          </div>
+          <p>Start with what feels right for you.</p>
+        </div>
+        <div className="home-category-grid">
+          {homeCategories.map((category) => (
+            <a className="home-category" href={getCategoryHref(category.category)} key={category.category}>
+              <img src={category.image} alt="" loading="lazy" />
+              <span className="home-category-copy">
+                <small>{category.eyebrow}</small>
+                <strong>{category.title}</strong>
+                <span>{category.detail}</span>
+                <b aria-hidden="true">Explore <span>→</span></b>
+              </span>
+            </a>
           ))}
         </div>
       </section>
@@ -1274,6 +1281,22 @@ function App() {
         </form>
         {profileFeedback && <p className="prescription-note" role="status">{profileFeedback}</p>}
         <div className="saved-addresses">
+          <div className="address-book-heading">
+            <h3>Delivery addresses</h3>
+            <p>Add an address to make checkout quicker next time.</p>
+          </div>
+          <form className="profile-form delivery-address-form" onSubmit={saveDeliveryAddress}>
+            <label>Label<input name="label" placeholder="Home, work..." required /></label>
+            <label>Recipient name<input name="fullName" autoComplete="name" placeholder="Full name" required /></label>
+            <label>Phone<input name="phone" type="tel" inputMode="numeric" autoComplete="tel" pattern="[0-9]{10}" title="Enter a 10-digit phone number" placeholder="10-digit phone number" required /></label>
+            <label className="address-street-field">Street address<input name="streetAddress" autoComplete="street-address" placeholder="House number and street" required /></label>
+            <label>Locality<input name="locality" autoComplete="address-line2" placeholder="Area or locality" /></label>
+            <label>City<input name="city" autoComplete="address-level2" required /></label>
+            <label>State<input name="state" autoComplete="address-level1" required /></label>
+            <label>PIN code<input name="postalCode" inputMode="numeric" autoComplete="postal-code" pattern="[1-9][0-9]{5}" title="Enter a valid 6-digit PIN code" required /></label>
+            <label>Country<input name="country" autoComplete="country-name" defaultValue="India" required /></label>
+            <button type="submit">Save delivery address</button>
+          </form>
           {addresses.map((address) => <details className="saved-address" key={address._id}>
             <summary>{address.label}: {address.streetAddress}, {address.city}{address.isDefault ? ' · Default' : ''}</summary>
             <div className="address-actions">
@@ -1293,7 +1316,7 @@ function App() {
               <button type="submit">Update address</button>
             </form>
           </details>)}
-          {addresses.length === 0 && <p>No saved delivery addresses yet. Save one during checkout.</p>}
+          {addresses.length === 0 && <p className="address-empty">No saved delivery addresses yet. Add one above when you are ready.</p>}
         </div>
       </section>}
 
